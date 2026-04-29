@@ -1,200 +1,5 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nathalie Seroux — Photographe</title>
-<meta name="description" content="Nathalie Seroux, photographe-autrice basée en Île-de-France. Portfolio, livres jeunesse et workshops photo.">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --cream: #F7F2EC; --warm-sand: #E8DDD0; --terracotta: #B8714E;
-    --terracotta-light: #D4967A; --bark: #6B4F3A; --charcoal: #2C2420;
-    --text-muted: #8C7B6E; --text-light: #B5A498; --white: #FDFAF6;
-  }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'Jost', sans-serif; background: var(--cream); color: var(--charcoal); font-weight: 300; overflow-x: hidden; }
-
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1.5rem 4rem; display: flex; justify-content: space-between; align-items: center; background: rgba(247,242,236,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(107,79,58,0.1); }
-  .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 400; letter-spacing: 0.12em; color: var(--charcoal); text-decoration: none; }
-  .nav-logo span { display: block; font-size: 0.65rem; font-family: 'Jost', sans-serif; font-weight: 300; letter-spacing: 0.35em; color: var(--terracotta); text-transform: uppercase; margin-top: 2px; }
-  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
-  .nav-links a { text-decoration: none; font-size: 0.75rem; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); transition: color 0.3s; }
-  .nav-links a:hover { color: var(--terracotta); }
-
-  .hero { min-height: 100vh; padding-top: 80px; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; }
-  .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 6rem 4rem 6rem 6rem; }
-  .hero-eyebrow { font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 2rem; font-weight: 400; }
-  .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(3.5rem, 6vw, 5.5rem); font-weight: 300; line-height: 1.05; color: var(--charcoal); margin-bottom: 2rem; }
-  .hero-title em { font-style: italic; color: var(--terracotta); }
-  .hero-quote { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-style: italic; font-weight: 300; color: var(--bark); line-height: 1.7; max-width: 38ch; margin-bottom: 3rem; border-left: 2px solid var(--terracotta-light); padding-left: 1.5rem; }
-  .hero-cta { display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none; font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--white); background: var(--terracotta); padding: 1rem 2.5rem; transition: background 0.3s, transform 0.2s; align-self: flex-start; }
-  .hero-cta:hover { background: var(--bark); transform: translateY(-2px); }
-  .hero-right { position: relative; overflow: hidden; }
-  .hero-image-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; height: 100%; gap: 3px; }
-  .hero-img-block { overflow: hidden; }
-  .hero-img-block:first-child { grid-column: 1 / 2; grid-row: 1 / 3; }
-  .hero-img-block img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s ease; }
-  .hero-img-block:hover img { transform: scale(1.04); }
-
-  section { padding: 7rem 0; }
-  .container { max-width: 1200px; margin: 0 auto; padding: 0 4rem; }
-  .section-label { font-size: 0.65rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 1rem; font-weight: 400; }
-  .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 300; color: var(--charcoal); line-height: 1.1; margin-bottom: 1.5rem; }
-  .section-title em { font-style: italic; color: var(--terracotta); }
-  .section-body { font-size: 0.95rem; line-height: 1.85; color: var(--text-muted); max-width: 58ch; }
-  .divider-line { width: 40px; height: 1px; background: var(--terracotta); margin: 1.5rem 0; }
-  .btn-outline { display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--terracotta); border: 1px solid var(--terracotta); padding: 0.9rem 2.5rem; transition: all 0.3s; }
-  .btn-outline:hover { background: var(--terracotta); color: var(--white); }
-
-  .about-section { background: var(--white); }
-  .about-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 6rem; align-items: center; }
-  .about-image { aspect-ratio: 1/1; position: relative; overflow: hidden; }
-  .about-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .about-image::after { content: ''; position: absolute; top: -2rem; right: -2rem; width: 60%; height: 60%; border: 1.5px solid var(--terracotta-light); opacity: 0.4; pointer-events: none; }
-  .stats-row { display: flex; gap: 3rem; margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid var(--warm-sand); }
-  .stat-item { display: flex; flex-direction: column; gap: 0.25rem; }
-  .stat-number { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 300; color: var(--terracotta); line-height: 1; }
-  .stat-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); }
-
-  .portfolio-section { background: var(--cream); }
-  .portfolio-intro { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3.5rem; }
-  .portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
-  .portfolio-item { position: relative; overflow: hidden; cursor: pointer; }
-  .portfolio-item:first-child { grid-column: 1 / 3; }
-  .portfolio-item img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; transition: transform 0.6s ease; }
-  .portfolio-item:first-child img { aspect-ratio: 16/9; }
-  .portfolio-item:hover img { transform: scale(1.04); }
-  .portfolio-ph { width: 100%; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(107,79,58,0.45); }
-  .ph-a { background: #C9BFB4; } .ph-b { background: #D5C9BE; } .ph-c { background: #E5DDD6; }
-  .portfolio-overlay { position: absolute; inset: 0; background: rgba(44,36,32,0); display: flex; align-items: flex-end; padding: 1.5rem; transition: background 0.4s; }
-  .portfolio-item:hover .portfolio-overlay { background: rgba(44,36,32,0.55); }
-  .portfolio-caption { opacity: 0; transform: translateY(8px); transition: all 0.3s; color: var(--cream); }
-  .portfolio-item:hover .portfolio-caption { opacity: 1; transform: translateY(0); }
-  .portfolio-caption h4 { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 400; margin-bottom: 0.25rem; }
-  .portfolio-caption p { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(247,242,236,0.7); }
-
-  .livres-section { background: var(--warm-sand); }
-  .livres-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 3.5rem; }
-  .livre-card { display: flex; flex-direction: column; background: var(--white); transition: transform 0.3s, box-shadow 0.3s; }
-  .livre-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(44,36,32,0.12); }
-  .livre-cover { aspect-ratio: 1/1; overflow: hidden; }
-  .livre-cover img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; }
-  .livre-card:hover .livre-cover img { transform: scale(1.04); }
-  .livre-info { padding: 1rem 1.25rem 1.5rem; flex: 1; display: flex; flex-direction: column; }
-  .livre-info h4 { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 500; color: var(--charcoal); margin-bottom: 0.3rem; }
-  .livre-info p { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.5; flex: 1; }
-  .livre-amazon { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); text-decoration: none; font-weight: 500; transition: color 0.2s; }
-  .livre-amazon:hover { color: var(--bark); }
-  .livres-cta-box { margin-top: 3.5rem; background: var(--charcoal); padding: 3rem 4rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
-  .livres-cta-box h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 300; color: var(--cream); }
-  .livres-cta-box p { font-size: 0.85rem; color: rgba(247,242,236,0.55); margin-top: 0.4rem; }
-  .btn-amazon { display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--charcoal); background: var(--terracotta-light); padding: 1rem 2.5rem; transition: all 0.3s; white-space: nowrap; font-weight: 500; }
-  .btn-amazon:hover { background: var(--terracotta); color: var(--white); }
-
-  .contact-section { background: var(--cream); }
-  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
-  .contact-form { display: flex; flex-direction: column; gap: 1.25rem; }
-  .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
-  .form-group label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted); }
-  .form-group input, .form-group textarea { background: transparent; border: none; border-bottom: 1px solid var(--text-light); padding: 0.75rem 0; font-family: 'Jost', sans-serif; font-size: 0.9rem; font-weight: 300; color: var(--charcoal); transition: border-color 0.3s; outline: none; }
-  .form-group input:focus, .form-group textarea:focus { border-bottom-color: var(--terracotta); }
-  .form-group textarea { resize: vertical; min-height: 100px; }
-  .form-submit { align-self: flex-start; margin-top: 0.5rem; display: inline-flex; align-items: center; gap: 0.75rem; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--white); background: var(--terracotta); border: none; padding: 0.9rem 2.5rem; cursor: pointer; font-family: 'Jost', sans-serif; transition: background 0.3s; }
-  .form-submit:hover { background: var(--bark); }
-  .contact-info p { font-size: 0.9rem; line-height: 1.9; color: var(--text-muted); margin-bottom: 2.5rem; }
-  .contact-details { display: flex; flex-direction: column; gap: 1rem; }
-  .contact-detail-item { display: flex; flex-direction: column; gap: 0.2rem; }
-  .detail-label { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-light); }
-  .detail-value { font-size: 0.9rem; color: var(--charcoal); }
-
-  footer { background: var(--charcoal); padding: 3rem 0; }
-  .footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 4rem; display: flex; justify-content: space-between; align-items: center; }
-  .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--cream); letter-spacing: 0.1em; }
-  .footer-copy { font-size: 0.7rem; color: rgba(247,242,236,0.35); letter-spacing: 0.1em; }
-  .footer-links { display: flex; gap: 2rem; list-style: none; }
-  .footer-links a { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(247,242,236,0.45); text-decoration: none; transition: color 0.2s; }
-  .footer-links a:hover { color: var(--terracotta-light); }
-
-  @media (max-width: 900px) {
-    nav { padding: 1.25rem 2rem; }
-    .nav-links { gap: 1.5rem; }
-    .hero { grid-template-columns: 1fr; min-height: auto; }
-    .hero-left { padding: 7rem 2rem 3rem; }
-    .hero-right { height: 60vw; }
-    .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
-    .livres-grid { grid-template-columns: repeat(2, 1fr); }
-    .portfolio-grid { grid-template-columns: 1fr 1fr; }
-    .portfolio-item:first-child { grid-column: 1 / 3; }
-    .container { padding: 0 2rem; }
-    .livres-cta-box { flex-direction: column; padding: 2rem; text-align: center; }
-    .footer-inner { flex-direction: column; gap: 1.5rem; text-align: center; }
-  }
-  @media (max-width: 600px) {
-    .livres-grid { grid-template-columns: 1fr; }
-    .portfolio-grid { grid-template-columns: 1fr; }
-    .portfolio-item:first-child { grid-column: 1; }
-    .nav-links { display: none; }
-    .stats-row { gap: 1.5rem; }
-  }
-</style>
-</head>
-<body>
-
-<nav>
-  <a href="#" class="nav-logo">Nathalie Seroux<span>Photographe</span></a>
-  <ul class="nav-links">
-    <li><a href="#livres">Livres</a></li>
-    <li><a href="#portfolio">Portfolio</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</nav>
-
-<section class="hero">
-  <div class="hero-left">
-    <p class="hero-eyebrow">Photographe · Autrice · Paris</p>
-    <h1 class="hero-title">La poésie<br>de <em>l'ordinaire</em></h1>
-    <blockquote class="hero-quote">« Saveurs, couleurs, bonheur — grâce à la photographie, je me sens présente au monde pleinement. »</blockquote>
-    <a href="#portfolio" class="hero-cta">Découvrir le travail →</a>
-  </div>
-  <div class="hero-right">
-    <div class="hero-image-grid">
-      <div class="hero-img-block"><img src="photos/hero1.jpg" alt="Photographie Nathalie Seroux" style="object-position: center 40%;"></div>
-      <div class="hero-img-block"><img src="photos/hero2.jpg" alt="Photographie Nathalie Seroux"></div>
-      <div class="hero-img-block"><img src="photos/hero3.jpg" alt="Photographie Nathalie Seroux"></div>
-    </div>
-  </div>
-</section>
-
-<section class="about-section" id="about">
-  <div class="container">
-    <div class="about-grid">
-      <div class="about-image">
-        <img src="photos/portrait.jpg" alt="Portrait de Nathalie Seroux photographe">
-      </div>
-      <div>
-        <p class="section-label">À propos</p>
-        <h2 class="section-title">Rencontrer,<br><em>Créer</em>, Partager</h2>
-        <div class="divider-line"></div>
-        <p class="section-body">Titulaire d'un Master de Photographie & Art Contemporain de Paris 8, Nathalie Seroux porte un regard poétique sur le monde. Après une carrière dans le marketing, elle se consacre entièrement à la photographie en 2008.</p>
-        <p class="section-body" style="margin-top:0.75rem;">Son leitmotiv : accueillir les émotions simples de l'instant. Un appareil toujours à portée de main, elle capte la lumière du quotidien pour en révéler la beauté discrète — reportages, portraits, nature morte.</p>
-        <div class="stats-row">
-          <div class="stat-item"><span class="stat-number">8</span><span class="stat-label">Livres publiés</span></div>
-          <div class="stat-item"><span class="stat-number">15+</span><span class="stat-label">Années d'expérience</span></div>
-          <div class="stat-item"><span class="stat-number">M2</span><span class="stat-label">Photo & Art contemporain</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="livres-section" id="livres">
-  <div class="container">
-    <p class="section-label">Publications</p>
-    <h2 class="section-title">La collection<br><em>Mon premier imagier photo</em></h2>
-    <p class="section-body">8 titres publiés aux Éditions de La Martinière Jeunesse — des imagiers photo sensibles et poétiques pour éveiller le regard des tout-petits sur le monde qui les entoure.</p>
-    <div class="livres-grid">
+<div class="livres-grid">
+      <!-- Livres existants -->
       <div class="livre-card">
         <div class="livre-cover"><img src="photos/livre_ferme.png" alt="À la ferme"></div>
         <div class="livre-info"><h4>À la ferme</h4><p>Animaux, tracteurs et grands espaces — la vie à la ferme en images.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
@@ -208,109 +13,26 @@
         <div class="livre-info"><h4>Au bord de la mer</h4><p>Sable, vagues et embruns — la magie de l'océan pour les tout-petits.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
       </div>
       <div class="livre-card">
-        <div class="livre-cover"><img src="photos/livre_autour_de_moi.png" alt="Autour de moi"></div>
+        <div class="livre-cover"><img src="photos/livre_autour_de_moi.jpg" alt="Autour de moi"></div>
         <div class="livre-info"><h4>Autour de moi</h4><p>L'environnement immédiat de l'enfant — doudous, jouets, couleurs du quotidien.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
       </div>
       <div class="livre-card">
-        <div class="livre-cover"><img src="photos/livre_fruits_et_legumes.png" alt="Fruits et légumes"></div>
+        <div class="livre-cover"><img src="photos/livre_fruits_et_legumes.jpg" alt="Fruits et légumes"></div>
         <div class="livre-info"><h4>Fruits et légumes</h4><p>Une vision personnelle et sensible des saveurs et couleurs de la nature.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
       </div>
+      
+      <!-- Mise à jour : À la montagne -->
       <div class="livre-card">
-        <div class="livre-cover"><img src="photos/serie_montagne.jpg" alt="À la montagne" style="object-position:center top;"></div>
+        <div class="livre-cover"><img src="photos/livre_a_la_montagne.jpg" alt="À la montagne"></div>
         <div class="livre-info"><h4>À la montagne</h4><p>Les différents visages de la montagne, hiver comme été, avec grande vitalité.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
       </div>
+
       <div class="livre-card">
-        <div class="livre-cover"><img src="photos/livre_dans_la_ville.png" alt="Dans la ville"></div>
+        <div class="livre-cover"><img src="photos/livre_dans_la_ville.jpg" alt="Dans la ville"></div>
         <div class="livre-info"><h4>Dans la ville</h4><p>Rues, marchés, jardins publics — l'univers urbain vu par les yeux d'un enfant.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
       </div>
       <div class="livre-card">
-        <div class="livre-cover"><img src="photos/livre_engins.png" alt="Les engins"></div>
-        <div class="livre-info"><h4>Les engins</h4><p>Camions, pelleteuses, avions — tous les véhicules qui font rêver les enfants.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
+        <div class="livre-cover"><img src="photos/livre_engins.jpg" alt="Engins"></div>
+        <div class="livre-info"><h4>Engins</h4><p>Camions, pelleteuses, avions — tous les véhicules qui font rêver les enfants.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
       </div>
     </div>
-    <div class="livres-cta-box">
-      <div><h3>Retrouvez toute la collection</h3><p>8 titres disponibles sur la boutique Amazon de Nathalie Seroux</p></div>
-      <a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="btn-amazon" target="_blank">Visiter la boutique Amazon →</a>
-    </div>
-  </div>
-</section>
-
-<section class="portfolio-section" id="portfolio">
-  <div class="container">
-    <div class="portfolio-intro">
-      <div><p class="section-label">Portfolio</p><h2 class="section-title">Les séries</h2></div>
-      <a href="#contact" class="btn-outline" style="flex-shrink:0;">Commander une séance →</a>
-    </div>
-    <div class="portfolio-grid">
-      <div class="portfolio-item">
-        <img src="photos/serie_principale.jpg" alt="Life On — série documentaire">
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>Life On</h4><p>Série documentaire</p></div></div>
-      </div>
-      <div class="portfolio-item">
-        <img src="photos/serie_montagne.jpg" alt="À la montagne">
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>À la montagne</h4><p>Reportage</p></div></div>
-      </div>
-      <div class="portfolio-item">
-        <div class="portfolio-ph ph-a">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(107,79,58,0.4)" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M3 9h2l2-3h10l2 3h2a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V10a1 1 0 011-1z"/></svg>
-          Votre photo
-        </div>
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>I Love Your Face</h4><p>Portraits</p></div></div>
-      </div>
-      <div class="portfolio-item">
-        <div class="portfolio-ph ph-b">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(107,79,58,0.4)" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M3 9h2l2-3h10l2 3h2a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V10a1 1 0 011-1z"/></svg>
-          Votre photo
-        </div>
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>Palais de Tokyo</h4><p>Art contemporain</p></div></div>
-      </div>
-      <div class="portfolio-item">
-        <div class="portfolio-ph ph-c">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(107,79,58,0.4)" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M3 9h2l2-3h10l2 3h2a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V10a1 1 0 011-1z"/></svg>
-          Votre photo
-        </div>
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>Faites Vos Vœux</h4><p>Série artistique</p></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<section class="contact-section" id="contact">
-  <div class="container">
-    <div class="contact-grid">
-      <div class="contact-info">
-        <p class="section-label">Contact</p>
-        <h2 class="section-title">Parlons de<br>votre <em>projet</em></h2>
-        <div class="divider-line"></div>
-        <p>Qu'il s'agisse d'organiser un atelier en milieu scolaire ou en médiathèque, de solliciter une exposition ou pour tout autre projet de collaboration, je serai ravie d'échanger avec vous pour donner vie à ces rencontres.</p>
-        <div class="contact-details">
-          <div class="contact-detail-item"><span class="detail-label">Email</span><span class="detail-value">nathalieseroux@gmail.com</span></div>
-          <div class="contact-detail-item"><span class="detail-label">Région</span><span class="detail-value">Île-de-France · Déplacements France entière</span></div>
-          <div class="contact-detail-item"><span class="detail-label">Boutique livres</span><span class="detail-value"><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" target="_blank" style="color:var(--terracotta);text-decoration:none;">Amazon — Collection complète</a></span></div>
-        </div>
-      </div>
-      <div class="contact-form">
-        <div class="form-group"><label for="name">Nom complet</label><input type="text" id="name" placeholder="Votre nom"></div>
-        <div class="form-group"><label for="email">Email</label><input type="email" id="email" placeholder="votre@email.com"></div>
-        <div class="form-group"><label for="subject">Sujet</label><input type="text" id="subject" placeholder="Atelier, exposition, collaboration..."></div>
-        <div class="form-group"><label for="message">Message</label><textarea id="message" placeholder="Décrivez votre projet..."></textarea></div>
-        <button class="form-submit">Envoyer le message →</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="footer-inner">
-    <div class="footer-logo">Nathalie Seroux</div>
-    <ul class="footer-links">
-      <li><a href="#livres">Livres</a></li>
-      <li><a href="#portfolio">Portfolio</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-    <p class="footer-copy">© 2026 Nathalie Seroux</p>
-  </div>
-</footer>
-</body>
-</html>
