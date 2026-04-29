@@ -100,24 +100,7 @@
   .btn-amazon { display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--charcoal); background: var(--terracotta-light); padding: 1rem 2.5rem; transition: all 0.3s; white-space: nowrap; font-weight: 500; }
   .btn-amazon:hover { background: var(--terracotta); color: var(--white); }
 
-  .workshops-section { background: var(--charcoal); }
-  .workshops-section .section-label { color: var(--terracotta-light); }
-  .workshops-section .section-title { color: var(--cream); }
-  .workshops-section .section-body { color: rgba(247,242,236,0.65); }
-  .workshops-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 3.5rem; background: rgba(255,255,255,0.08); }
-  .workshop-card { background: var(--charcoal); padding: 2.5rem 2rem; transition: background 0.3s; }
-  .workshop-card:hover { background: #3A2E28; }
-  .workshop-number { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-weight: 300; color: var(--terracotta); opacity: 0.4; line-height: 1; margin-bottom: 1rem; }
-  .workshop-tag { display: inline-block; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--terracotta-light); border: 1px solid rgba(212,150,122,0.4); padding: 0.3rem 0.75rem; margin-bottom: 1rem; }
-  .workshop-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 400; color: var(--cream); margin-bottom: 0.75rem; line-height: 1.2; }
-  .workshop-card p { font-size: 0.85rem; line-height: 1.75; color: rgba(247,242,236,0.55); margin-bottom: 1.5rem; }
-  .workshop-meta { display: flex; gap: 1.5rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.08); }
-  .meta-item { display: flex; flex-direction: column; gap: 0.2rem; }
-  .meta-label { font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(247,242,236,0.35); }
-  .meta-value { font-size: 0.8rem; color: rgba(247,242,236,0.75); }
-  .workshop-cta { text-align: center; margin-top: 3.5rem; }
-  .btn-light { display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--cream); border: 1px solid rgba(247,242,236,0.4); padding: 0.9rem 2.5rem; transition: all 0.3s; }
-  .btn-light:hover { background: var(--terracotta); border-color: var(--terracotta); }
+
 
   .contact-section { background: var(--cream); }
   .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
@@ -172,9 +155,8 @@
 <nav>
   <a href="#" class="nav-logo">Nathalie Seroux<span>Photographe</span></a>
   <ul class="nav-links">
-    <li><a href="#portfolio">Portfolio</a></li>
     <li><a href="#livres">Livres</a></li>
-    <li><a href="#workshops">Workshops</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
@@ -212,46 +194,6 @@
           <div class="stat-item"><span class="stat-number">15+</span><span class="stat-label">Années d'expérience</span></div>
           <div class="stat-item"><span class="stat-number">M2</span><span class="stat-label">Photo & Art contemporain</span></div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="portfolio-section" id="portfolio">
-  <div class="container">
-    <div class="portfolio-intro">
-      <div><p class="section-label">Portfolio</p><h2 class="section-title">Les séries</h2></div>
-      <a href="#contact" class="btn-outline" style="flex-shrink:0;">Commander une séance →</a>
-    </div>
-    <div class="portfolio-grid">
-      <div class="portfolio-item">
-        <img src="photos/serie_principale.jpg" alt="Life On — série documentaire">
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>Life On</h4><p>Série documentaire</p></div></div>
-      </div>
-      <div class="portfolio-item">
-        <img src="photos/serie_montagne.jpg" alt="À la montagne">
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>À la montagne</h4><p>Reportage</p></div></div>
-      </div>
-      <div class="portfolio-item">
-        <div class="portfolio-ph ph-a">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(107,79,58,0.4)" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M3 9h2l2-3h10l2 3h2a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V10a1 1 0 011-1z"/></svg>
-          Votre photo
-        </div>
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>I Love Your Face</h4><p>Portraits</p></div></div>
-      </div>
-      <div class="portfolio-item">
-        <div class="portfolio-ph ph-b">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(107,79,58,0.4)" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M3 9h2l2-3h10l2 3h2a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V10a1 1 0 011-1z"/></svg>
-          Votre photo
-        </div>
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>Palais de Tokyo</h4><p>Art contemporain</p></div></div>
-      </div>
-      <div class="portfolio-item">
-        <div class="portfolio-ph ph-c">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(107,79,58,0.4)" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M3 9h2l2-3h10l2 3h2a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V10a1 1 0 011-1z"/></svg>
-          Votre photo
-        </div>
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>Faites Vos Vœux</h4><p>Série artistique</p></div></div>
       </div>
     </div>
   </div>
@@ -303,46 +245,46 @@
   </div>
 </section>
 
-<section class="workshops-section" id="workshops">
+<section class="portfolio-section" id="portfolio">
   <div class="container">
-    <p class="section-label">Ateliers</p>
-    <h2 class="section-title">Workshops<br><em>photo</em></h2>
-    <p class="section-body">Apprendre à voir autrement. Des ateliers conçus pour éveiller votre regard et cultiver votre propre poésie visuelle — en plein air comme en studio.</p>
-    <div class="workshops-grid">
-      <div class="workshop-card">
-        <div class="workshop-number">01</div>
-        <span class="workshop-tag">Débutant · Intermédiaire</span>
-        <h3>La lumière du quotidien</h3>
-        <p>Apprendre à révéler la beauté des instants ordinaires. Lumière naturelle, composition intuitive, regard sensitif.</p>
-        <div class="workshop-meta">
-          <div class="meta-item"><span class="meta-label">Durée</span><span class="meta-value">1 journée</span></div>
-          <div class="meta-item"><span class="meta-label">Format</span><span class="meta-value">Groupe 6 pers.</span></div>
-        </div>
+    <div class="portfolio-intro">
+      <div><p class="section-label">Portfolio</p><h2 class="section-title">Les séries</h2></div>
+      <a href="#contact" class="btn-outline" style="flex-shrink:0;">Commander une séance →</a>
+    </div>
+    <div class="portfolio-grid">
+      <div class="portfolio-item">
+        <img src="photos/serie_principale.jpg" alt="Life On — série documentaire">
+        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>Life On</h4><p>Série documentaire</p></div></div>
       </div>
-      <div class="workshop-card">
-        <div class="workshop-number">02</div>
-        <span class="workshop-tag">Tous niveaux</span>
-        <h3>Portrait & présence</h3>
-        <p>Capter l'émotion vraie d'un visage. Mettre en confiance, diriger avec douceur, révéler l'âme de votre sujet.</p>
-        <div class="workshop-meta">
-          <div class="meta-item"><span class="meta-label">Durée</span><span class="meta-value">Week-end</span></div>
-          <div class="meta-item"><span class="meta-label">Format</span><span class="meta-value">Groupe 8 pers.</span></div>
-        </div>
+      <div class="portfolio-item">
+        <img src="photos/serie_montagne.jpg" alt="À la montagne">
+        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>À la montagne</h4><p>Reportage</p></div></div>
       </div>
-      <div class="workshop-card">
-        <div class="workshop-number">03</div>
-        <span class="workshop-tag">Sur mesure</span>
-        <h3>Atelier privé</h3>
-        <p>Un accompagnement personnalisé adapté à votre projet photographique. Suivi de portfolio, relecture d'images.</p>
-        <div class="workshop-meta">
-          <div class="meta-item"><span class="meta-label">Durée</span><span class="meta-value">À définir</span></div>
-          <div class="meta-item"><span class="meta-label">Format</span><span class="meta-value">Individuel</span></div>
+      <div class="portfolio-item">
+        <div class="portfolio-ph ph-a">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(107,79,58,0.4)" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M3 9h2l2-3h10l2 3h2a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V10a1 1 0 011-1z"/></svg>
+          Votre photo
         </div>
+        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>I Love Your Face</h4><p>Portraits</p></div></div>
+      </div>
+      <div class="portfolio-item">
+        <div class="portfolio-ph ph-b">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(107,79,58,0.4)" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M3 9h2l2-3h10l2 3h2a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V10a1 1 0 011-1z"/></svg>
+          Votre photo
+        </div>
+        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>Palais de Tokyo</h4><p>Art contemporain</p></div></div>
+      </div>
+      <div class="portfolio-item">
+        <div class="portfolio-ph ph-c">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(107,79,58,0.4)" stroke-width="1"><circle cx="12" cy="12" r="4"/><path d="M3 9h2l2-3h10l2 3h2a1 1 0 011 1v9a1 1 0 01-1 1H3a1 1 0 01-1-1V10a1 1 0 011-1z"/></svg>
+          Votre photo
+        </div>
+        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>Faites Vos Vœux</h4><p>Série artistique</p></div></div>
       </div>
     </div>
-    <div class="workshop-cta"><a href="#contact" class="btn-light">Demander un programme →</a></div>
   </div>
 </section>
+
 
 <section class="contact-section" id="contact">
   <div class="container">
@@ -351,7 +293,7 @@
         <p class="section-label">Contact</p>
         <h2 class="section-title">Parlons de<br>votre <em>projet</em></h2>
         <div class="divider-line"></div>
-        <p>Transmettre et exposer sont au cœur de ma démarche. Vous souhaitez organiser un atelier créatif (écoles, médiathèques...) ou accueillir une exposition ? Je suis à votre écoute pour imaginer ensemble de nouveaux moments de partage.</p>
+        <p>Pour une commande de reportage, un projet éditorial ou toute autre question, je serai ravie d'échanger avec vous.</p>
         <div class="contact-details">
           <div class="contact-detail-item"><span class="detail-label">Email</span><span class="detail-value">nathaliseroux@gmail.com</span></div>
           <div class="contact-detail-item"><span class="detail-label">Région</span><span class="detail-value">Île-de-France · Déplacements France entière</span></div>
@@ -361,7 +303,7 @@
       <div class="contact-form">
         <div class="form-group"><label for="name">Nom complet</label><input type="text" id="name" placeholder="Votre nom"></div>
         <div class="form-group"><label for="email">Email</label><input type="email" id="email" placeholder="votre@email.com"></div>
-        <div class="form-group"><label for="subject">Sujet</label><input type="text" id="subject" placeholder="Reportage, atelier, presse..."></div>
+        <div class="form-group"><label for="subject">Sujet</label><input type="text" id="subject" placeholder="Reportage, presse, collaboration..."></div>
         <div class="form-group"><label for="message">Message</label><textarea id="message" placeholder="Décrivez votre projet..."></textarea></div>
         <button class="form-submit">Envoyer le message →</button>
       </div>
@@ -373,9 +315,8 @@
   <div class="footer-inner">
     <div class="footer-logo">Nathalie Seroux</div>
     <ul class="footer-links">
-      <li><a href="#portfolio">Portfolio</a></li>
       <li><a href="#livres">Livres</a></li>
-      <li><a href="#workshops">Workshops</a></li>
+      <li><a href="#portfolio">Portfolio</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
     <p class="footer-copy">© 2026 Nathalie Seroux</p>
