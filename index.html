@@ -82,13 +82,6 @@
   .livre-cover { aspect-ratio: 1/1; overflow: hidden; }
   .livre-cover img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; }
   .livre-card:hover .livre-cover img { transform: scale(1.04); }
-  .livre-cover-fallback { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; padding: 1.5rem; }
-  .livre-cover-title { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 400; color: var(--white); text-align: center; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
-  .livre-cover-sub { font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.8); text-shadow: 0 1px 3px rgba(0,0,0,0.3); text-align: center; }
-  .cover-bg-1 { background: linear-gradient(145deg, #C9A882, #B8714E); }
-  .cover-bg-3 { background: linear-gradient(145deg, #D4A76A, #A8784A); }
-  .cover-bg-7 { background: linear-gradient(145deg, #C4B8A8, #7D6E5E); }
-  .cover-bg-8 { background: linear-gradient(145deg, #A8B4C4, #5E6E8E); }
   .livre-info { padding: 1rem 1.25rem 1.5rem; flex: 1; display: flex; flex-direction: column; }
   .livre-info h4 { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 500; color: var(--charcoal); margin-bottom: 0.3rem; }
   .livre-info p { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.5; flex: 1; }
@@ -99,8 +92,6 @@
   .livres-cta-box p { font-size: 0.85rem; color: rgba(247,242,236,0.55); margin-top: 0.4rem; }
   .btn-amazon { display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--charcoal); background: var(--terracotta-light); padding: 1rem 2.5rem; transition: all 0.3s; white-space: nowrap; font-weight: 500; }
   .btn-amazon:hover { background: var(--terracotta); color: var(--white); }
-
-
 
   .contact-section { background: var(--cream); }
   .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
@@ -134,7 +125,6 @@
     .hero-right { height: 60vw; }
     .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
     .livres-grid { grid-template-columns: repeat(2, 1fr); }
-    .workshops-grid { grid-template-columns: 1fr; }
     .portfolio-grid { grid-template-columns: 1fr 1fr; }
     .portfolio-item:first-child { grid-column: 1 / 3; }
     .container { padding: 0 2rem; }
@@ -218,23 +208,23 @@
         <div class="livre-info"><h4>Au bord de la mer</h4><p>Sable, vagues et embruns — la magie de l'océan pour les tout-petits.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
       </div>
       <div class="livre-card">
-        <div class="livre-cover"><div class="livre-cover-fallback cover-bg-1"><span class="livre-cover-sub">Mon premier imagier photo</span><span class="livre-cover-title">Autour de moi</span></div></div>
+        <div class="livre-cover"><img src="photos/livre_autour.jpg" alt="Autour de moi"></div>
         <div class="livre-info"><h4>Autour de moi</h4><p>L'environnement immédiat de l'enfant — doudous, jouets, couleurs du quotidien.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
       </div>
       <div class="livre-card">
-        <div class="livre-cover"><div class="livre-cover-fallback cover-bg-3"><span class="livre-cover-sub">Mon premier imagier photo</span><span class="livre-cover-title">Fruits & légumes</span></div></div>
-        <div class="livre-info"><h4>Fruits & légumes</h4><p>Une vision personnelle et sensible des saveurs et couleurs de la nature.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
+        <div class="livre-cover"><img src="photos/livre_fruits.jpg" alt="Fruits et légumes"></div>
+        <div class="livre-info"><h4>Fruits et légumes</h4><p>Une vision personnelle et sensible des saveurs et couleurs de la nature.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
       </div>
       <div class="livre-card">
         <div class="livre-cover"><img src="photos/serie_montagne.jpg" alt="À la montagne" style="object-position:center top;"></div>
         <div class="livre-info"><h4>À la montagne</h4><p>Les différents visages de la montagne, hiver comme été, avec grande vitalité.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
       </div>
       <div class="livre-card">
-        <div class="livre-cover"><div class="livre-cover-fallback cover-bg-7"><span class="livre-cover-sub">Mon premier imagier photo</span><span class="livre-cover-title">Dans la ville</span></div></div>
+        <div class="livre-cover"><img src="photos/livre_ville.jpg" alt="Dans la ville"></div>
         <div class="livre-info"><h4>Dans la ville</h4><p>Rues, marchés, jardins publics — l'univers urbain vu par les yeux d'un enfant.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
       </div>
       <div class="livre-card">
-        <div class="livre-cover"><div class="livre-cover-fallback cover-bg-8"><span class="livre-cover-sub">Mon premier imagier photo</span><span class="livre-cover-title">Les engins</span></div></div>
+        <div class="livre-cover"><img src="photos/livre_engins.jpg" alt="Les engins"></div>
         <div class="livre-info"><h4>Les engins</h4><p>Camions, pelleteuses, avions — tous les véhicules qui font rêver les enfants.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
       </div>
     </div>
