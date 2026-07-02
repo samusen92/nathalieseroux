@@ -137,6 +137,54 @@
     .nav-links { display: none; }
     .stats-row { gap: 1.5rem; }
   }
+ /* --- Interface de Connexion Admin --- */
+  .admin-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(44, 36, 32, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .admin-modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .admin-modal {
+    background: var(--white);
+    padding: 3rem;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(44, 36, 32, 0.15);
+  }
+  .modal-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .modal-close:hover {
+    color: var(--terracotta);
+  }
+  .modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--charcoal);
+    text-align: center;
+    margin-bottom: 2rem;
+  }
 </style>
 </head>
 <body>
@@ -299,8 +347,64 @@
       <li><a href="#portfolio">Portfolio</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <p class="footer-copy">© 2026 Nathalie Seroux</p>
+    <p class="footer-copy">© 2026 Nathalie Seroux | <a href="#" id="openAdmin" style="color: inherit; text-decoration: underline; transition: color 0.2s;">Admin</a></p>
   </div>
 </footer>
+ <div class="admin-modal-overlay" id="adminModal">
+  <div class="admin-modal">
+    <button class="modal-close" id="closeAdmin">&times;</button>
+    <h3 class="modal-title">Espace Administration</h3>
+    <form class="contact-form" id="adminLoginForm" style="gap: 1.5rem;">
+      <div class="form-group">
+        <label for="admin-username">Identifiant</label>
+        <input type="text" id="admin-username" required placeholder="Votre identifiant">
+      </div>
+      <div class="form-group">
+        <label for="admin-password">Mot de passe</label>
+        <input type="password" id="admin-password" required placeholder="••••••••">
+      </div>
+      <button type="submit" class="form-submit" style="width: 100%; justify-content: center; margin-top: 1rem;">Se connecter</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Gestion de l'affichage de l'interface d'authentification admin
+  const openAdmin = document.getElementById('openAdmin');
+  const closeAdmin = document.getElementById('closeAdmin');
+  const adminModal = document.getElementById('adminModal');
+  const adminLoginForm = document.getElementById('adminLoginForm');
+
+  if (openAdmin && closeAdmin && adminModal && adminLoginForm) {
+    openAdmin.addEventListener('click', (e) => {
+      e.preventDefault();
+      adminModal.classList.add('active');
+    });
+
+    closeAdmin.addEventListener('click', () => {
+      adminModal.classList.remove('active');
+    });
+
+    adminModal.addEventListener('click', (e) => {
+      if (e.target === adminModal) {
+        adminModal.classList.remove('active');
+      }
+    });
+
+    // Interception de la connexion (Identifiants temporaires : admin / admin)
+    adminLoginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('admin-username').value;
+      const password = document.getElementById('admin-password').value;
+
+      if (username === "admin" && password === "admin") {
+        alert("Connexion réussie. Mode administrateur prêt.");
+        adminModal.classList.remove('active');
+      } else {
+        alert("Identifiants incorrects.");
+      }
+    });
+  }
+</script>
 </body>
 </html>
