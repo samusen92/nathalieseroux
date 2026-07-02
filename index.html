@@ -501,6 +501,26 @@
   function utf8_to_b64(str) { return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (m, p) => String.fromCharCode('0x' + p))); }
   function b64_to_utf8(str) { return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')); }
 
+  // Transforme un nom de fichier utilisateur (avec accents/espaces/caractères spéciaux)
+  // en un nom de fichier "slug" propre et 100% compatible avec GitHub / GitHub Pages.
+  // Ex: "salon été (Paris).jpg" -> "salon-ete-paris.jpg"
+  function slugifyFileName(originalName) {
+    const lastDot = originalName.lastIndexOf('.');
+    const hasExt = lastDot > 0 && lastDot < originalName.length - 1;
+    const namePart = hasExt ? originalName.slice(0, lastDot) : originalName;
+    const extPart = hasExt ? originalName.slice(lastDot + 1).toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+
+    const slug = namePart
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // retire les accents (é -> e, à -> a, etc.)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-') // tout caractère non alphanumérique -> tiret
+      .replace(/^-+|-+$/g, '')     // retire les tirets en début/fin
+      .slice(0, 60);               // évite les noms trop longs
+
+    const safeSlug = slug || 'image';
+    return extPart ? `${safeSlug}.${extPart}` : safeSlug;
+  }
+
   // Initialisation au chargement de la page
   window.addEventListener('DOMContentLoaded', () => {
     if (gitHubToken) document.body.classList.add('admin-mode');
@@ -639,7 +659,7 @@
       // 1. Si une nouvelle image est sélectionnée, on l'upload d'abord dans /photos via l'API GitHub
       if (imageFile) {
         const base64Content = await getBase64(imageFile);
-        const fileName = `news_${Date.now()}_${imageFile.name.replace(/\s+/g, '_')}`;
+        const fileName = `news_${Date.now()}_${slugifyFileName(imageFile.name)}`;
         const imgUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/photos/${fileName}`;
         
         const imgRes = await fetch(imgUrl, {
@@ -694,6 +714,10 @@
     if (checkRes.ok) {
       const fileData = await checkRes.json();
       sha = fileData.sha;
+    } else if (checkRes.status !== 404) {
+      // Le fichier existe potentiellement mais la requête a échoué pour une autre raison
+      // (token invalide/expiré, rate-limit...). On stoppe pour éviter d'écraser des données.
+      throw new Error("Impossible de vérifier l'état actuel du fichier sur GitHub (code " + checkRes.status + "). Vérifiez votre jeton d'accès.");
     }
 
     const jsonString = JSON.stringify(localNewsArray, null, 2);
