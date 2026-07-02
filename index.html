@@ -209,6 +209,7 @@
     text-align: center;
     margin-bottom: 2rem;
   }
+ 
 </style>
 </head>
 <body>
@@ -227,7 +228,7 @@
   <div class="hero-left">
     <p class="hero-eyebrow">Photographe · Autrice · Paris</p>
     <h1 class="hero-title">La poésie<br>de <em>l'ordinaire</em></h1>
-    <blockquote class="hero-quote">« ceoaubnceiuzbcv Saveurs, couleurs, bonheur — grâce à la photographie, je me sens présente au monde pleinement. »</blockquote>
+    <blockquote class="hero-quote">« Saveurs, couleurs, bonheur — grâce à la photographie, je me sens présente au monde pleinement. »</blockquote>
     <a href="#portfolio" class="hero-cta">Découvrir le travail →</a>
   </div>
   <div class="hero-right">
@@ -444,20 +445,226 @@
 </div>
 
 <script>
-  // Interception de la connexion (Identifiants temporaires : admin / admin)
-    adminLoginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const username = document.getElementById('admin-username').value;
-      const password = document.getElementById('admin-password').value;
+  // Configuration de votre dépôt GitHub
+  const GH_OWNER = 'samusen92';
+  const GH_REPO = 'nathalieseroux';
+  const JSON_PATH = 'data/news.json';
 
-      if (username === "admin" && password === "admin") {
-        alert("Connexion réussie. Mode administrateur activé.");
-        adminModal.classList.remove('active');
-        document.body.classList.add('admin-mode'); // Fait apparaître les boutons d'édition
-      } else {
-        alert("Identifiants incorrects.");
-      }
+  let gitHubToken = sessionStorage.getItem('gh_token') || '';
+  let localNewsArray = [];
+
+  // Éléments DOM
+  const openAdmin = document.getElementById('openAdmin');
+  const closeAdmin = document.getElementById('closeAdmin');
+  const adminModal = document.getElementById('adminModal');
+  const adminLoginForm = document.getElementById('adminLoginForm');
+  
+  const newsFormModal = document.getElementById('newsFormModal');
+  const btnOpenAddModal = document.getElementById('btnOpenAddModal');
+  const closeNewsForm = document.getElementById('closeNewsForm');
+  const newsArticleForm = document.getElementById('newsArticleForm');
+
+  // Encodage propre prenant en compte les accents français (UTF-8)
+  function utf8_to_b64(str) { return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (m, p) => String.fromCharCode('0x' + p))); }
+  function b64_to_utf8(str) { return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')); }
+
+  // Initialisation au chargement de la page
+  window.addEventListener('DOMContentLoaded', () => {
+    if (gitHubToken) document.body.classList.add('admin-mode');
+    loadNewsFromGitHub();
+  });
+
+  // Récupérer et afficher les articles (Lecture publique)
+  async function loadNewsFromGitHub() {
+    const grid = document.getElementById('newsGrid');
+    try {
+      // Le paramètre de temps évite que le navigateur n'affiche une version en cache après une modification
+      const response = await fetch(`${JSON_PATH}?t=${Date.now()}`);
+      if (!response.ok) { localNewsArray = []; renderNewsGrid(); return; }
+      localNewsArray = await response.json();
+      renderNewsGrid();
+    } catch (e) {
+      grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--text-muted);">Aucune actualité pour le moment. Passez en mode Admin pour créer le premier article !</p>';
+    }
+  }
+
+  function renderNewsGrid() {
+    const grid = document.getElementById('newsGrid');
+    if (localNewsArray.length === 0) {
+      grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--text-muted);">Le journal est vide.</p>';
+      return;
+    }
+    grid.innerHTML = '';
+    localNewsArray.forEach((item, index) => {
+      grid.innerHTML += `
+        <article class="news-card">
+          <div class="admin-controls">
+            <button class="btn-admin" onclick="openEditNews(${index})">Éditer</button>
+            <button class="btn-admin btn-admin-danger" onclick="deleteNewsItem(${index})">Supprimer</button>
+          </div>
+          <div class="news-image">
+            ${item.image ? `<img src="${item.image}" alt="${item.title}">` : ''}
+          </div>
+          <div class="news-content">
+            <span class="news-date">${item.date}</span>
+            <h3 class="news-title">${item.title}</h3>
+            <p class="news-excerpt">${item.excerpt}</p>
+            <a href="#" class="news-read-more" onclick="event.preventDefault();">Lire la suite →</a>
+          </div>
+        </article>
+      `;
     });
+  }
+
+  // Connexion Admin
+  openAdmin.addEventListener('click', (e) => { e.preventDefault(); adminModal.classList.add('active'); });
+  closeAdmin.addEventListener('click', () => adminModal.classList.remove('active'));
+  
+  adminLoginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const user = document.getElementById('admin-username').value;
+    const pass = document.getElementById('admin-password').value;
+    const token = document.getElementById('admin-token').value.trim();
+
+    if (user === "admin" && pass === "admin" && token.startsWith('ghp_')) {
+      gitHubToken = token;
+      sessionStorage.setItem('gh_token', token);
+      document.body.classList.add('admin-mode');
+      adminModal.classList.remove('active');
+      alert("Connexion validée. Les fonctionnalités de modification en direct sur GitHub sont prêtes.");
+      renderNewsGrid();
+    } else {
+      alert("Identifiants incorrects ou format de jeton GitHub non valide.");
+    }
+  });
+
+  // Modale d'ajout/édition d'articles
+  btnOpenAddModal.addEventListener('click', () => {
+    newsArticleForm.reset();
+    document.getElementById('edit-index').value = "";
+    document.getElementById('newsModalTitle').innerText = "Ajouter une actualité";
+    document.getElementById('image-current-path').innerText = "";
+    document.getElementById('news-image-file').required = true;
+    newsFormModal.classList.add('active');
+  });
+  closeNewsForm.addEventListener('click', () => newsFormModal.classList.remove('active'));
+
+  window.openEditNews = function(index) {
+    const item = localNewsArray[index];
+    document.getElementById('edit-index').value = index;
+    document.getElementById('news-title').value = item.title;
+    document.getElementById('news-date').value = item.date;
+    document.getElementById('news-excerpt').value = item.excerpt;
+    document.getElementById('image-current-path').innerText = "Image actuelle : " + item.image;
+    document.getElementById('news-image-file').required = false;
+    document.getElementById('newsModalTitle').innerText = "Modifier l'actualité";
+    newsFormModal.classList.add('active');
+  };
+
+  // Convertir le fichier image sélectionné en Base64 pour l'envoi API
+  function getBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  // Soumission du formulaire (Ajout ou Enregistrement)
+  newsArticleForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const indexStr = document.getElementById('edit-index').value;
+    const title = document.getElementById('news-title').value;
+    const date = document.getElementById('news-date').value;
+    const excerpt = document.getElementById('news-excerpt').value;
+    const imageFile = document.getElementById('news-image-file').files[0];
+    
+    const btnSubmit = document.getElementById('btnSubmitNews');
+    btnSubmit.innerText = "Synchronisation GitHub...";
+    btnSubmit.disabled = true;
+
+    try {
+      let imagePath = "";
+      if (indexStr !== "") {
+        imagePath = localNewsArray[parseInt(indexStr)].image;
+      }
+
+      // 1. Si une nouvelle image est sélectionnée, on l'upload d'abord dans /photos via l'API GitHub
+      if (imageFile) {
+        const base64Content = await getBase64(imageFile);
+        const fileName = `news_${Date.now()}_${imageFile.name.replace(/\s+/g, '_')}`;
+        const imgUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/photos/${fileName}`;
+        
+        const imgRes = await fetch(imgUrl, {
+          method: 'PUT',
+          headers: { 'Authorization': `token ${gitHubToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: `Upload image: ${fileName}`, content: base64Content })
+        });
+        
+        if (!imgRes.ok) throw new Error("Échec du téléversement de l'image sur GitHub.");
+        imagePath = `photos/${fileName}`;
+      }
+
+      // 2. Mettre à jour notre tableau local de données
+      const articleData = { title, date, excerpt, image: imagePath };
+      if (indexStr === "") {
+        localNewsArray.unshift(articleData); // Ajouter en premier dans la liste
+      } else {
+        localNewsArray[parseInt(indexStr)] = articleData; // Modifier l'existant
+      }
+
+      // 3. Envoyer la base de données JSON mise à jour sur GitHub
+      await pushDatabaseToGitHub("Mise à jour du journal d'actualités");
+      newsFormModal.classList.remove('active');
+      alert("Enregistrement réussi ! Les modifications seront visibles publiquement sur votre site d'ici 1 à 2 minutes (temps de déploiement de GitHub Pages).");
+    } catch (err) {
+      alert("Erreur lors de la synchronisation : " + err.message);
+    } finally {
+      btnSubmit.innerText = "Enregistrer sur GitHub";
+      btnSubmit.disabled = false;
+    }
+  });
+
+  // Supprimer un article
+  window.deleteNewsItem = async function(index) {
+    if (!confirm("Voulez-vous vraiment supprimer définitivement cet article ?")) return;
+    localNewsArray.splice(index, 1);
+    try {
+      await pushDatabaseToGitHub("Suppression d'un article du journal");
+      alert("Article supprimé.");
+    } catch (err) {
+      alert("Erreur lors de la suppression : " + err.message);
+    }
+  };
+
+  // Fonction centrale pour pousser le fichier JSON sur GitHub (gère l'historique SHA obligatoire)
+  async function pushDatabaseToGitHub(commitMessage) {
+    const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${JSON_PATH}`;
+    let sha = null;
+
+    // Récupérer le SHA du fichier existant sur GitHub (obligatoire pour pouvoir l'écraser)
+    const checkRes = await fetch(url, { headers: { 'Authorization': `token ${gitHubToken}` } });
+    if (checkRes.ok) {
+      const fileData = await checkRes.json();
+      sha = fileData.sha;
+    }
+
+    const jsonString = JSON.stringify(localNewsArray, null, 2);
+    const base64Content = utf8_to_b64(jsonString);
+
+    const body = { message: commitMessage, content: base64Content };
+    if (sha) body.sha = sha;
+
+    const saveRes = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Authorization': `token ${gitHubToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (!saveRes.ok) throw new Error("Impossible de mettre à jour le fichier de données sur GitHub.");
+    renderNewsGrid();
+  }
 </script>
 </body>
 </html>
