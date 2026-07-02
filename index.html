@@ -268,7 +268,7 @@
     <h2 class="section-title">Dernières <em>Actualités</em></h2>
     
     <div class="add-news-container">
-      <button class="btn-outline">✚ Ajouter une actualité</button>
+      <button class="btn-outline" id="btnOpenAddModal">✚ Ajouter une actualité</button>
     </div>
 
     <div class="news-grid" id="newsGrid">
@@ -286,7 +286,6 @@
           <span class="news-date">12 Octobre 2026</span>
           <h3 class="news-title">Dédicace au Salon du Livre Jeunesse</h3>
           <p class="news-excerpt">Retrouvez-moi ce week-end pour échanger autour de la collection "Mon premier imagier photo".</p>
-          <a href="#" class="news-read-more">Lire la suite →</a>
         </div>
       </article>
 
@@ -303,7 +302,6 @@
           <span class="news-date">05 Septembre 2026</span>
           <h3 class="news-title">Nouveaux ateliers en milieu scolaire</h3>
           <p class="news-excerpt">Lancement du programme d'éveil à l'image pour les classes de maternelle en Île-de-France.</p>
-          <a href="#" class="news-read-more">Lire la suite →</a>
         </div>
       </article>
 
@@ -439,11 +437,46 @@
         <label for="admin-password">Mot de passe</label>
         <input type="password" id="admin-password" required placeholder="••••••••">
       </div>
+      <div class="form-group">
+        <label for="admin-token">Jeton GitHub (Token)</label>
+        <input type="password" id="admin-token" required placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+      </div>
       <button type="submit" class="form-submit" style="width: 100%; justify-content: center; margin-top: 1rem;">Se connecter</button>
     </form>
   </div>
 </div>
-
+<div class="admin-modal-overlay" id="newsFormModal">
+  <div class="admin-modal">
+    <button class="modal-close" id="closeNewsForm">&times;</button>
+    <h3 class="modal-title" id="newsModalTitle">Ajouter une actualité</h3>
+    <form class="contact-form" id="newsArticleForm" style="gap: 1.5rem;">
+      <input type="hidden" id="edit-index" value="">
+      
+      <div class="form-group">
+        <label for="news-title">Titre de l'article</label>
+        <input type="text" id="news-title" required placeholder="Ex: Dédicace au Salon du Livre">
+      </div>
+      
+      <div class="form-group">
+        <label for="news-date">Date</label>
+        <input type="text" id="news-date" required placeholder="Ex: 12 Octobre 2026">
+      </div>
+      
+      <div class="form-group">
+        <label for="news-excerpt">Contenu / Extrait</label>
+        <textarea id="news-excerpt" required placeholder="Résumé de l'actualité..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="news-image-file">Image d'illustration</label>
+        <input type="file" id="news-image-file" accept="image/*" required style="border: none; padding: 0;">
+        <span id="image-current-path" style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 0.5rem;"></span>
+      </div>
+      
+      <button type="submit" id="btnSubmitNews" class="form-submit" style="width: 100%; justify-content: center; margin-top: 1rem;">Enregistrer sur GitHub</button>
+    </form>
+  </div>
+</div>
 <script>
   // Configuration de votre dépôt GitHub
   const GH_OWNER = 'samusen92';
@@ -509,7 +542,6 @@
             <span class="news-date">${item.date}</span>
             <h3 class="news-title">${item.title}</h3>
             <p class="news-excerpt">${item.excerpt}</p>
-            <a href="#" class="news-read-more" onclick="event.preventDefault();">Lire la suite →</a>
           </div>
         </article>
       `;
