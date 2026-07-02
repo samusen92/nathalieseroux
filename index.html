@@ -507,17 +507,31 @@
     loadNewsFromGitHub();
   });
 
-  // Récupérer et afficher les articles (Lecture publique)
+  // Récupérer et afficher les articles (Lecture publique ou API temps réel pour l'admin)
   async function loadNewsFromGitHub() {
     const grid = document.getElementById('newsGrid');
     try {
-      // Le paramètre de temps évite que le navigateur n'affiche une version en cache après une modification
-      const response = await fetch(`${JSON_PATH}?t=${Date.now()}`);
-      if (!response.ok) { localNewsArray = []; renderNewsGrid(); return; }
-      localNewsArray = await response.json();
+      if (gitHubToken) {
+        // Si l'admin est connecté, charger directement depuis l'API GitHub pour un affichage instantané
+        const response = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${JSON_PATH}`, {
+          headers: { 'Authorization': `token ${gitHubToken}` }
+        });
+        if (!response.ok) { localNewsArray = []; renderNewsGrid(); return; }
+        const fileData = await response.json();
+        
+        // CORRECTION CRITIQUE : Supprime les retours à la ligne (\n) générés par l'API GitHub
+        const cleanBase64 = fileData.content.replace(/\s/g, '');
+        localNewsArray = JSON.parse(b64_to_utf8(cleanBase64));
+      } else {
+        // Pour les visiteurs, charger le fichier déployé (avec paramètre anti-cache)
+        const response = await fetch(`${JSON_PATH}?t=${Date.now()}`);
+        if (!response.ok) { localNewsArray = []; renderNewsGrid(); return; }
+        localNewsArray = await response.json();
+      }
       renderNewsGrid();
     } catch (e) {
-      grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--text-muted);">Aucune actualité pour le moment. Passez en mode Admin pour créer le premier article !</p>';
+      console.error("Erreur de décodage ou de lecture :", e);
+      grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--text-muted);">Aucune actualité pour le moment ou erreur de synchronisation.</p>';
     }
   }
 
