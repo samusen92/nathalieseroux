@@ -402,11 +402,29 @@
         </div>
       </div>
       <div class="contact-form">
-        <div class="form-group"><label for="name">Nom complet</label><input type="text" id="name" placeholder="Votre nom"></div>
-        <div class="form-group"><label for="email">Email</label><input type="email" id="email" placeholder="votre@email.com"></div>
-        <div class="form-group"><label for="subject">Sujet</label><input type="text" id="subject" placeholder="Atelier, exposition, collaboration..."></div>
-        <div class="form-group"><label for="message">Message</label><textarea id="message" placeholder="Décrivez votre projet..."></textarea></div>
-        <button class="form-submit">Envoyer le message →</button>
+        <form action="https://formsubmit.co/nathalieseroux@gmail.com" method="POST" class="contact-form">
+        <!-- Champ caché pour indiquer la provenance dans le corps du mail -->
+        <input type="hidden" name="Origine" value="Message envoyé depuis le site internet Nathalie Seroux">
+        
+        <div class="form-group">
+          <label for="name">Nom complet</label>
+          <input type="text" id="name" name="Nom" placeholder="Votre nom" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="votre@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="subject">Sujet</label>
+          <!-- L'attribut name="_subject" définit l'objet du mail reçu -->
+          <input type="text" id="subject" name="_subject" placeholder="Atelier, exposition, collaboration..." required>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="Message" placeholder="Décrivez votre projet..." required></textarea>
+        </div>
+        <button type="submit" class="form-submit">Envoyer le message →</button>
+      </form>
       </div>
     </div>
   </div>
