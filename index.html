@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nathalie Seroux — Photographe</title>
+<title>Nathalie Seroux —  Photographe</title>
 <meta name="description" content="Nathalie Seroux, photographe-autrice basée en Île-de-France. Portfolio, livres jeunesse et workshops photo.">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -402,11 +402,29 @@
         </div>
       </div>
       <div class="contact-form">
-        <div class="form-group"><label for="name">Nom complet</label><input type="text" id="name" placeholder="Votre nom"></div>
-        <div class="form-group"><label for="email">Email</label><input type="email" id="email" placeholder="votre@email.com"></div>
-        <div class="form-group"><label for="subject">Sujet</label><input type="text" id="subject" placeholder="Atelier, exposition, collaboration..."></div>
-        <div class="form-group"><label for="message">Message</label><textarea id="message" placeholder="Décrivez votre projet..."></textarea></div>
-        <button class="form-submit">Envoyer le message →</button>
+        <form action="https://formsubmit.co/nathalieseroux@gmail.com" method="POST" class="contact-form">
+        <!-- Champ caché pour indiquer la provenance dans le corps du mail -->
+        <input type="hidden" name="Origine" value="Message envoyé depuis le site internet Nathalie Seroux">
+        
+        <div class="form-group">
+          <label for="name">Nom complet</label>
+          <input type="text" id="name" name="Nom" placeholder="Votre nom" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="votre@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="subject">Sujet</label>
+          <!-- L'attribut name="_subject" définit l'objet du mail reçu -->
+          <input type="text" id="subject" name="_subject" placeholder="Atelier, exposition, collaboration..." required>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="Message" placeholder="Décrivez votre projet..." required></textarea>
+        </div>
+        <button type="submit" class="form-submit">Envoyer le message →</button>
+      </form>
       </div>
     </div>
   </div>
@@ -500,6 +518,26 @@
   // Encodage propre prenant en compte les accents français (UTF-8)
   function utf8_to_b64(str) { return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (m, p) => String.fromCharCode('0x' + p))); }
   function b64_to_utf8(str) { return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')); }
+
+  // Transforme un nom de fichier utilisateur (avec accents/espaces/caractères spéciaux)
+  // en un nom de fichier "slug" propre et 100% compatible avec GitHub / GitHub Pages.
+  // Ex: "salon été (Paris).jpg" -> "salon-ete-paris.jpg"
+  function slugifyFileName(originalName) {
+    const lastDot = originalName.lastIndexOf('.');
+    const hasExt = lastDot > 0 && lastDot < originalName.length - 1;
+    const namePart = hasExt ? originalName.slice(0, lastDot) : originalName;
+    const extPart = hasExt ? originalName.slice(lastDot + 1).toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+
+    const slug = namePart
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // retire les accents (é -> e, à -> a, etc.)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-') // tout caractère non alphanumérique -> tiret
+      .replace(/^-+|-+$/g, '')     // retire les tirets en début/fin
+      .slice(0, 60);               // évite les noms trop longs
+
+    const safeSlug = slug || 'image';
+    return extPart ? `${safeSlug}.${extPart}` : safeSlug;
+  }
 
   // Initialisation au chargement de la page
   window.addEventListener('DOMContentLoaded', () => {
@@ -639,7 +677,7 @@
       // 1. Si une nouvelle image est sélectionnée, on l'upload d'abord dans /photos via l'API GitHub
       if (imageFile) {
         const base64Content = await getBase64(imageFile);
-        const fileName = `news_${Date.now()}_${imageFile.name.replace(/\s+/g, '_')}`;
+        const fileName = `news_${Date.now()}_${slugifyFileName(imageFile.name)}`;
         const imgUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/photos/${fileName}`;
         
         const imgRes = await fetch(imgUrl, {
@@ -694,6 +732,10 @@
     if (checkRes.ok) {
       const fileData = await checkRes.json();
       sha = fileData.sha;
+    } else if (checkRes.status !== 404) {
+      // Le fichier existe potentiellement mais la requête a échoué pour une autre raison
+      // (token invalide/expiré, rate-limit...). On stoppe pour éviter d'écraser des données.
+      throw new Error("Impossible de vérifier l'état actuel du fichier sur GitHub (code " + checkRes.status + "). Vérifiez votre jeton d'accès.");
     }
 
     const jsonString = JSON.stringify(localNewsArray, null, 2);
