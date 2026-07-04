@@ -209,7 +209,82 @@
     text-align: center;
     margin-bottom: 2rem;
   }
- 
+ /* --- Modale Dynamique "Où trouver le livre" --- */
+  button.livre-amazon {
+    background: none;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .book-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(44, 36, 32, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .book-modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .book-modal-box {
+    background-color: #f4f1ea;
+    padding: 3rem;
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(44, 36, 32, 0.15);
+  }
+  
+  .book-modal-box .modal-title {
+    text-align: left;
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    color: var(--charcoal);
+    font-family: 'Cormorant Garamond', serif;
+  }
+  
+  .store-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .btn-store {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 14px 20px;
+    color: var(--charcoal);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 400;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-store:hover {
+    border-color: var(--warm-sand);
+    box-shadow: 0 4px 12px rgba(44,36,32,0.06);
+    color: var(--terracotta);
+  }
+  
+  .store-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    margin-right: 18px;
+  }
 </style>
 </head>
 <body>
@@ -317,35 +392,35 @@
     <div class="livres-grid">
       <div class="livre-card">
         <div class="livre-cover"><img src="photos/livre_ferme.png" alt="À la ferme"></div>
-        <div class="livre-info"><h4>À la ferme</h4><p>Animaux, tracteurs et grands espaces — la vie à la ferme en images.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
+        <div class="livre-info"><h4>À la ferme</h4><p>Animaux, tracteurs et grands espaces — la vie à la ferme en images.</p><button class="livre-amazon" onclick="openBookModal('ferme')">Où trouver le livre →</button></div>
       </div>
       <div class="livre-card">
         <div class="livre-cover"><img src="photos/livre_abcdaire.png" alt="ABCdaire"></div>
-        <div class="livre-info"><h4>ABCdaire</h4><p>Découvrir les lettres de l'alphabet en s'amusant avec les formes et les couleurs.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
+        <div class="livre-info"><h4>ABCdaire</h4><p>Découvrir les lettres de l'alphabet en s'amusant avec les formes et les couleurs.</p><button class="livre-amazon" onclick="openBookModal('abcdaire')">Où trouver le livre →</button></div>
       </div>
       <div class="livre-card">
         <div class="livre-cover"><img src="photos/livre_mer.jpg" alt="Au bord de la mer"></div>
-        <div class="livre-info"><h4>Au bord de la mer</h4><p>Sable, vagues et embruns — la magie de l'océan pour les tout-petits.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
+        <div class="livre-info"><h4>Au bord de la mer</h4><p>Sable, vagues et embruns — la magie de l'océan pour les tout-petits.</p><button class="livre-amazon" onclick="openBookModal('mer')">Où trouver le livre →</button></div>
       </div>
       <div class="livre-card">
         <div class="livre-cover"><img src="photos/livre_autour_de_moi.png" alt="Autour de moi"></div>
-        <div class="livre-info"><h4>Autour de moi</h4><p>L'environnement immédiat de l'enfant — doudous, jouets, couleurs du quotidien.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
+        <div class="livre-info"><h4>Autour de moi</h4><p>L'environnement immédiat de l'enfant — doudous, jouets, couleurs du quotidien.</p><button class="livre-amazon" onclick="openBookModal('autour-de-moi')">Où trouver le livre →</button></div>
       </div>
       <div class="livre-card">
         <div class="livre-cover"><img src="photos/livre_fruits_et_legumes.png" alt="Fruits et légumes"></div>
-        <div class="livre-info"><h4>Fruits et légumes</h4><p>Une vision personnelle et sensible des saveurs et couleurs de la nature.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
+        <div class="livre-info"><h4>Fruits et légumes</h4><p>Une vision personnelle et sensible des saveurs et couleurs de la nature.</p><button class="livre-amazon" onclick="openBookModal('fruits')">Où trouver le livre →</button></div>
       </div>
       <div class="livre-card">
         <div class="livre-cover"><img src="photos/livre_a_la_montagne.jpg" alt="À la montagne"></div>
-        <div class="livre-info"><h4>À la montagne</h4><p>Les différents visages de la montagne, hiver comme été, avec grande vitalité.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
+        <div class="livre-info"><h4>À la montagne</h4><p>Les différents visages de la montagne, hiver comme été, avec grande vitalité.</p><button class="livre-amazon" onclick="openBookModal('montagne')">Où trouver le livre →</button></div>
       </div>
       <div class="livre-card">
         <div class="livre-cover"><img src="photos/livre_dans_la_ville.png" alt="Dans la ville"></div>
-        <div class="livre-info"><h4>Dans la ville</h4><p>Rues, marchés, jardins publics — l'univers urbain vu par les yeux d'un enfant.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
+        <div class="livre-info"><h4>Dans la ville</h4><p>Rues, marchés, jardins publics — l'univers urbain vu par les yeux d'un enfant.</p><button class="livre-amazon" onclick="openBookModal('ville')">Où trouver le livre →</button></div>
       </div>
       <div class="livre-card">
         <div class="livre-cover"><img src="photos/livre_engins.png" alt="Engins"></div>
-        <div class="livre-info"><h4>Engins</h4><p>Camions, pelleteuses, avions — tous les véhicules qui font rêver les enfants.</p><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" class="livre-amazon" target="_blank">Voir sur Amazon →</a></div>
+        <div class="livre-info"><h4>Engins</h4><p>Camions, pelleteuses, avions — tous les véhicules qui font rêver les enfants.</p><button class="livre-amazon" onclick="openBookModal('engins')">Où trouver le livre →</button></div>
       </div>
     </div>
     <div class="livres-cta-box">
@@ -493,6 +568,19 @@
       
       <button type="submit" id="btnSubmitNews" class="form-submit" style="width: 100%; justify-content: center; margin-top: 1rem;">Enregistrer sur GitHub</button>
     </form>
+  </div>
+</div>
+
+<!-- =================================================== -->
+<!-- MODALE DES LIVRES (TOTALEMENT INDÉPENDANTE) -->
+<div class="book-modal-overlay" id="bookLinksModal">
+  <div class="book-modal-box">
+    <button class="modal-close" id="closeBookModal">&times;</button>
+    <h3 class="modal-title">Commandez ce livre ici</h3>
+    <div class="store-links-list" id="dynamicStoreLinks"></div>
+  </div>
+</div>
+<!-- =================================================== -->
   </div>
 </div>
 <script>
@@ -753,6 +841,103 @@
     if (!saveRes.ok) throw new Error("Impossible de mettre à jour le fichier de données sur GitHub.");
     renderNewsGrid();
   }
+ // --- CONFIGURATION DE L'ORDRE ET DES LOGOS DES LIBRAIRIES ---
+  // Remplacez les chemins "photos/logo_..." par vos fichiers images réels
+  const storesConfig = [
+    { id: 'independantes', name: 'Librairies Indépendantes', icon: 'photos/logo_independantes.png' },
+    { id: 'parislibrairies', name: 'Paris Librairies', icon: 'photos/logo_parislibrairies.png' },
+    { id: 'laprocure', name: 'La Procure', icon: 'photos/logo_laprocure.png' },
+    { id: 'fnac', name: 'Fnac', icon: 'photos/logo_fnac.png' },
+    { id: 'amazon', name: 'Amazon', icon: 'photos/logo_amazon.png' }
+  ];
+
+  /// --- BASE DE DONNÉES DE VOS LIENS PAR LIVRE ---
+  const booksData = {
+    'ferme': {
+      'parislibrairies': 'https://www.parislibrairies.fr/livre/9782732493886-a-la-ferme-nathalie-seroux/',
+      'leslibraires': 'https://www.leslibraires.fr/livre/16828095-a-la-ferme-mon-premier-imagier-photo-nathalie-seroux-la-martiniere-jeunesse',
+      'fnac': 'https://www.fnac.com/SearchResult/ResultList.aspx?Search=9782732493886',
+      'amazon': 'https://www.amazon.fr/%C3%80-ferme-premier-imagier-photo/dp/2732493880/ref=sr_1_1?dib=eyJ2IjoiMSJ9.VSwG9T1hL9nPi4JlthM4MA.Ii17XX-Mwl-UpcOdmhnsTlxwIWbYg29G2TAsbBh00Vc&dib_tag=se&keywords=9782732493886&qid=1783184769&sr=8-1'
+    },
+    'abcdaire': {
+      'parislibrairies': 'https://www.parislibrairies.fr/livre/9782732480725-abcdaire-nathalie-seroux/',
+      'leslibraires': 'https://www.leslibraires.fr/livre/10701941-abcdaire-mon-premier-imagier-photo-nathalie-seroux-la-martiniere-jeunesse',
+      'fnac': 'https://www.fnac.com/SearchResult/ResultList.aspx?Search=9782732480725',
+      'amazon': 'https://www.amazon.fr/ABCDaire-Mon-premier-imagier-photo/dp/273248072X/ref=sr_1_1?dib=eyJ2IjoiMSJ9.E3MOGelj1MVAYoo6DOMKkQ.c9LuDRMwKvifNAqDNc5FMBvyb4DkMzuRySi1L11erZk&dib_tag=se&keywords=9782732480725&qid=1783184589&sr=8-1'
+    
+    },
+    'mer': {
+      'independantes': 'https://www.librairiesindependantes.com/product/9791040121947/',
+      'parislibrairies': 'https://www.parislibrairies.fr/livre/9791040121947-au-bord-de-la-mer-nathalie-seroux/',
+      'leslibraires': 'https://www.leslibraires.fr/livre/24438965-mon-premier-imagier-photo-au-bord-de-la-mer-ne-mon-premier-imagier-photo-nathalie-seroux-la-martiniere-jeunesse',
+      'fnac': 'https://www.fnac.com/SearchResult/ResultList.aspx?Search=9791040121947',
+      'amazon': 'https://www.amazon.fr/Au-bord-mer-NE-premier/dp/B0DWSH3MZN/ref=sr_1_1?dib=eyJ2IjoiMSJ9.fC065w42RpyX6NXjtD7qIg.UyF9SZwl86dLUI91yKmcqm_JG4wizZW5lXV_Y_Red_k&dib_tag=se&keywords=9791040121947&qid=1783184171&sr=8-1'
+    },
+    'autour-de-moi': {
+      'parislibrairies': 'https://www.parislibrairies.fr/livre/9782732463698-autour-de-moi-nathalie-seroux/',
+      'leslibraires': 'https://www.leslibraires.fr/livre/7052692-autour-de-moi-mon-premier-imagier-photo-nathalie-seroux-la-martiniere-jeunesse',
+      'fnac': 'https://www.fnac.com/SearchResult/ResultList.aspx?Search=9782732463698',
+      'amazon': 'https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab'
+    },
+    'fruits': {
+      'parislibrairies': 'https://www.parislibrairies.fr/livre/9782732484945-fruits-et-legumes-nathalie-seroux/',
+      'leslibraires': 'https://www.leslibraires.fr/livre/13497161-fruits-et-legumes-mon-premier-imagier-photo-nathalie-seroux-la-martiniere-jeunesse',
+      'fnac': 'https://www.fnac.com/SearchResult/ResultList.aspx?Search=9782732484945',
+      'amazon': 'https://www.amazon.fr/Fruits-l%C3%A9gumes-premier-imagier-photo/dp/2732484946/ref=sr_1_1?dib=eyJ2IjoiMSJ9.D-ZEDgA8AkqpA0n6Vl6inA.ir2QeoGI-wj4uVMhO7rPML6fFJhZz3O9GYO1om4iuJE&dib_tag=se&keywords=9782732484945&qid=1783184907&sr=8-1'
+    },
+    'montagne': {
+      'independantes': 'https://www.librairiesindependantes.com/product/9782732498232/',
+      'parislibrairies': 'https://www.parislibrairies.fr/livre/9782732498232-a-la-montagne-nathalie-seroux/',
+      'leslibraires': 'https://www.leslibraires.fr/livre/20130246-a-la-montagne-mon-premier-imagier-photo-nathalie-seroux-la-martiniere-jeunesse',
+      'fnac': 'https://www.fnac.com/SearchResult/ResultList.aspx?Search=9782732498232',
+      'amazon': 'https://www.amazon.fr/%C3%80-montagne-Nathalie-Seroux/dp/2732498238/ref=sr_1_1?dib=eyJ2IjoiMSJ9.LlwXlYtLF3r7nWmBVTqbBw.tRx2AYQuyEPWx34O5O2HFgJgah8k2geX0p2T2FPtW0I&dib_tag=se&keywords=9782732498232&qid=1783185057&sr=8-1'
+    },
+    'ville': {
+      'independantes': 'https://www.librairiesindependantes.com/product/9791040114130/',
+      'parislibrairies': 'https://www.parislibrairies.fr/livre/9791040114130-dans-la-ville-nathalie-seroux/',
+      'leslibraires': 'https://www.leslibraires.fr/livre/22370262-dans-la-ville-nathalie-seroux-la-martiniere-jeunesse',
+      'fnac': 'https://www.fnac.com/SearchResult/ResultList.aspx?Search=9791040114130',
+      'amazon': 'https://www.amazon.fr/Dans-ville-Nathalie-Seroux/dp/B0BXNSFL4S/ref=sr_1_1?dib=eyJ2IjoiMSJ9.BDZrWBH0SY0FmSnylwr6_Q.um7_tYwzldPVNCy4rm7T_FZ2cKXjnR4BnpdG6ylu6A0&dib_tag=se&keywords=9791040114130&qid=1783185157&sr=8-1'
+    },
+    'engins': {
+      'parislibrairies': 'https://www.parislibrairies.fr/livre/9791040118800-engins-nathalie-seroux/',
+      'leslibraires': 'https://www.leslibraires.fr/livre/23505389-engins-mon-premier-imagier-photo-nathalie-seroux-la-martiniere-jeunesse',
+      'fnac': 'https://www.fnac.com/SearchResult/ResultList.aspx?Search=9791040118800',
+      'amazon': 'https://www.amazon.fr/Engins-Mon-premier-imagier-photo/dp/B0CVDQKSCJ/ref=sr_1_1?dib=eyJ2IjoiMSJ9.AiQ-MswyU7M3iUQvSPLgQA.SkAyn74zPUpIXz_PELn2eQm3C_e-y6H7_tkJfUaX-3s&dib_tag=se&keywords=9791040118800&qid=1783185240&sr=8-1'
+    },
+  };
+  // --- LOGIQUE D'OUVERTURE ET FILTRAGE DYNAMIQUE ---
+  const bookLinksModal = document.getElementById('bookLinksModal');
+  const closeBookModal = document.getElementById('closeBookModal');
+  const dynamicStoreLinks = document.getElementById('dynamicStoreLinks');
+
+  window.openBookModal = function(bookId) {
+    dynamicStoreLinks.innerHTML = ''; // On vide les anciens boutons
+    const links = booksData[bookId];
+    
+    if (links) {
+      // On parcourt la configuration pour garantir le même ordre d'affichage
+      storesConfig.forEach(store => {
+        const url = links[store.id];
+        // Condition stricte : si l'URL existe et n'est pas vide, on crée le bouton
+        if (url && url.trim() !== '') {
+          dynamicStoreLinks.innerHTML += `
+            <a href="${url}" class="btn-store" target="_blank" rel="noopener noreferrer">
+              <img src="${store.icon}" alt="Logo ${store.name}" class="store-icon">
+              <span>${store.name}</span>
+            </a>
+          `;
+        }
+      });
+    }
+    bookLinksModal.classList.add('active');
+  };
+
+  // Fermeture au clic sur la croix ou à l'extérieur de la modale
+  closeBookModal.addEventListener('click', () => bookLinksModal.classList.remove('active'));
+  bookLinksModal.addEventListener('click', (e) => {
+    if (e.target === bookLinksModal) bookLinksModal.classList.remove('active');
+  });
 </script>
 </body>
 </html>
