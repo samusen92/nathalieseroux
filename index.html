@@ -218,12 +218,35 @@
     padding: 0;
   }
   
-  .book-modal {
-    background-color: #f4f1ea !important; /* Fond beige identique à la maquette */
-    max-width: 450px !important;
+  .book-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(44, 36, 32, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
   }
   
-  .book-modal .modal-title {
+  .book-modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .book-modal-box {
+    background-color: #f4f1ea;
+    padding: 3rem;
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(44, 36, 32, 0.15);
+  }
+  
+  .book-modal-box .modal-title {
     text-align: left;
     font-size: 1.4rem;
     margin-bottom: 1.5rem;
@@ -545,13 +568,19 @@
       
       <button type="submit" id="btnSubmitNews" class="form-submit" style="width: 100%; justify-content: center; margin-top: 1rem;">Enregistrer sur GitHub</button>
     </form>
-   <div class="admin-modal-overlay" id="bookLinksModal">
-  <div class="admin-modal book-modal">
+  </div>
+</div>
+
+<!-- =================================================== -->
+<!-- MODALE DES LIVRES (TOTALEMENT INDÉPENDANTE) -->
+<div class="book-modal-overlay" id="bookLinksModal">
+  <div class="book-modal-box">
     <button class="modal-close" id="closeBookModal">&times;</button>
     <h3 class="modal-title">Commandez ce livre ici</h3>
     <div class="store-links-list" id="dynamicStoreLinks"></div>
   </div>
 </div>
+<!-- =================================================== -->
   </div>
 </div>
 <script>
