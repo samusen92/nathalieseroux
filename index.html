@@ -488,8 +488,9 @@
           <div class="contact-detail-item"><span class="detail-label">Boutique livres</span><span class="detail-value"><a href="https://www.amazon.fr/stores/author/B00QN3PL2U/allbooks?_encoding=UTF8&ref_=aufs_ap_ahdr_dsk_ab" target="_blank" style="color:var(--terracotta);text-decoration:none;">Amazon — Collection complète</a></span></div>
         </div>
       </div>
-      <div class="contact-form">
-        <form action="https://formsubmit.co/nathalieseroux@gmail.com" method="POST" class="contact-form">
+      
+      <!-- Conteneur <div> inutile retiré ici pour éviter un doublon de classe .contact-form -->
+      <form action="https://formsubmit.co/nathalieseroux@gmail.com" method="POST" class="contact-form">
         <!-- Champ caché pour indiquer la provenance dans le corps du mail -->
         <input type="hidden" name="Origine" value="Message envoyé depuis le site internet Nathalie Seroux">
         
@@ -512,7 +513,7 @@
         </div>
         <button type="submit" class="form-submit">Envoyer le message →</button>
       </form>
-      </div>
+      
     </div>
   </div>
 </section>
@@ -529,7 +530,8 @@
     <p class="footer-copy">© 2026 Nathalie Seroux | <a href="#" id="openAdmin" style="color: inherit; text-decoration: underline; transition: color 0.2s;">Admin</a></p>
   </div>
 </footer>
- <div class="admin-modal-overlay" id="adminModal">
+
+<div class="admin-modal-overlay" id="adminModal">
   <div class="admin-modal">
     <button class="modal-close" id="closeAdmin">&times;</button>
     <h3 class="modal-title">Espace Administration</h3>
@@ -550,6 +552,7 @@
     </form>
   </div>
 </div>
+
 <div class="admin-modal-overlay" id="newsFormModal">
   <div class="admin-modal">
     <button class="modal-close" id="closeNewsForm">&times;</button>
@@ -585,7 +588,7 @@
 
 <!-- =================================================== -->
 
- <div class="admin-modal-overlay" id="imageEditModal">
+<div class="admin-modal-overlay" id="imageEditModal">
   <div class="admin-modal">
     <button class="modal-close" id="closeImageEdit">&times;</button>
     <h3 class="modal-title">Modifier l'image</h3>
@@ -615,8 +618,7 @@
   </div>
 </div>
 <!-- =================================================== -->
-  </div>
-</div>
+
 <script>
   // Configuration de votre dépôt GitHub
   const GH_OWNER = 'samusen92';
