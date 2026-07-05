@@ -6,7 +6,8 @@
 <title>Nathalie Seroux —  Photographe</title>
 <meta name="description" content="Nathalie Seroux, photographe-autrice basée en Île-de-France. Portfolio, livres jeunesse et workshops photo.">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+ <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --cream: #F7F2EC; --warm-sand: #E8DDD0; --terracotta: #B8714E;
@@ -529,23 +530,27 @@
 
 <div class="admin-modal-overlay" id="adminModal">
   <div class="admin-modal">
-    <button class="modal-close" id="closeAdmin">&times;</button>
-    <h3 class="modal-title">Espace Administration</h3>
-    <form class="contact-form" id="adminLoginForm" style="gap: 1.5rem;">
-      <div class="form-group">
-        <label for="admin-username">Identifiant</label>
-        <input type="text" id="admin-username" required placeholder="Votre identifiant">
-      </div>
-      <div class="form-group">
-        <label for="admin-password">Mot de passe</label>
-        <input type="password" id="admin-password" required placeholder="••••••••">
-      </div>
-      <div class="form-group">
-        <label for="admin-token">Jeton GitHub (Token)</label>
-        <input type="password" id="admin-token" required placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-      </div>
-      <button type="submit" class="form-submit" style="width: 100%; justify-content: center; margin-top: 1rem;">Se connecter</button>
-    </form>
+  <button class="modal-close" id="closeAdmin">&times;</button>
+  <h3 class="modal-title">Espace Administration</h3>
+  <form class="contact-form" id="adminLoginForm" style="gap: 1.5rem;">
+    <div class="form-group">
+      <label for="admin-username">Identifiant</label>
+      <input type="text" id="admin-username" required placeholder="admin">
+    </div>
+    
+    <div class="form-group" id="token-field-wrapper">
+      <label for="admin-token">Jeton GitHub (Token)</label>
+      <input type="password" id="admin-token" placeholder="ghp_xxxxxxxxxxxx">
+    </div>
+
+    <div class="form-group">
+      <label for="admin-password">Mot de passe Maître</label>
+      <input type="password" id="admin-password" required placeholder="Votre mot de passe secret">
+    </div>
+    
+    <button type="submit" class="form-submit" style="width: 100%; justify-content: center; margin-top: 1rem;">Se connecter</button>
+    <button type="button" id="btnResetToken" style="background:none; border:none; color:var(--text-muted); text-decoration:underline; cursor:pointer; font-size:0.7rem; margin-top:10px;">Réinitialiser le jeton enregistré</button>
+  </form>
   </div>
 </div>
 
@@ -721,26 +726,73 @@
   }
 
   // Connexion Admin
-  openAdmin.addEventListener('click', (e) => { e.preventDefault(); adminModal.classList.add('active'); });
-  closeAdmin.addEventListener('click', () => adminModal.classList.remove('active'));
-  
-  adminLoginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const user = document.getElementById('admin-username').value;
-    const pass = document.getElementById('admin-password').value;
-    const token = document.getElementById('admin-token').value.trim();
+  // --- LOGIQUE DE CHIFFREMENT ---
+const STORAGE_KEY = 'gh_token_encrypted';
 
-    if (user === "admin" && pass === "admin" && token.startsWith('ghp_')) {
-      gitHubToken = token;
-      sessionStorage.setItem('gh_token', token);
-      document.body.classList.add('admin-mode');
-      adminModal.classList.remove('active');
-      alert("Connexion validée. Les fonctionnalités de modification en direct sur GitHub sont prêtes.");
-      renderNewsGrid();
-    } else {
-      alert("Identifiants incorrects ou format de jeton GitHub non valide.");
+function encryptToken(token, pass) {
+    return CryptoJS.AES.encrypt(token, pass).toString();
+}
+
+function decryptToken(encryptedData, pass) {
+    try {
+        const bytes = CryptoJS.AES.decrypt(encryptedData, pass);
+        const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+        return decrypted.startsWith('ghp_') ? decrypted : null; // Validation basique
+    } catch (e) { return null; }
+}
+
+// --- INITIALISATION UI ---
+const tokenFieldWrapper = document.getElementById('token-field-wrapper');
+const btnResetToken = document.getElementById('btnResetToken');
+
+// Au chargement, vérifier si un token est déjà stocké
+window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem(STORAGE_KEY)) {
+        tokenFieldWrapper.style.display = 'none'; // Cache le champ token si déjà stocké
     }
-  });
+});
+
+// Bouton pour forcer la réinitialisation si vous changez de token
+btnResetToken.addEventListener('click', () => {
+    if(confirm("Effacer le jeton enregistré ?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+    }
+});
+
+// --- GESTION DE CONNEXION ---
+adminLoginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const pass = document.getElementById('admin-password').value;
+    const inputToken = document.getElementById('admin-token').value;
+    const storedEncrypted = localStorage.getItem(STORAGE_KEY);
+
+    // CAS 1 : Première connexion (on enregistre le token)
+    if (!storedEncrypted) {
+        if (!inputToken.startsWith('ghp_')) {
+            alert("Veuillez saisir un jeton GitHub valide.");
+            return;
+        }
+        const encrypted = encryptToken(inputToken, pass);
+        localStorage.setItem(STORAGE_KEY, encrypted);
+        gitHubToken = inputToken;
+    } 
+    // CAS 2 : Déverrouillage (on déchiffre)
+    else {
+        const decrypted = decryptToken(storedEncrypted, pass);
+        if (!decrypted) {
+            alert("Mot de passe incorrect.");
+            return;
+        }
+        gitHubToken = decrypted;
+    }
+
+    // Suite de la logique après connexion réussie
+    sessionStorage.setItem('gh_token', gitHubToken); // Garde en session pour la navigation
+    document.body.classList.add('admin-mode');
+    adminModal.classList.remove('active');
+    renderNewsGrid();
+});
 
   // Modale d'ajout/édition d'articles
   btnOpenAddModal.addEventListener('click', () => {
