@@ -285,6 +285,18 @@
     object-fit: contain;
     margin-right: 18px;
   }
+
+ /* --- Édition des images en mode Admin --- */
+  body.admin-mode img {
+    cursor: pointer;
+    transition: outline 0.2s, filter 0.2s;
+  }
+  
+  body.admin-mode img:not(.store-icon):hover {
+    outline: 4px solid var(--terracotta);
+    outline-offset: -4px;
+    filter: brightness(0.8);
+  }
 </style>
 </head>
 <body>
@@ -572,6 +584,28 @@
 </div>
 
 <!-- =================================================== -->
+
+ <div class="admin-modal-overlay" id="imageEditModal">
+  <div class="admin-modal">
+    <button class="modal-close" id="closeImageEdit">&times;</button>
+    <h3 class="modal-title">Modifier l'image</h3>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem; text-align: center;" id="imageEditPath"></p>
+    
+    <form class="contact-form" id="imageEditForm" style="gap: 1.5rem;">
+      <input type="hidden" id="image-target-path">
+      
+      <div class="form-group">
+        <label for="new-image-file">Sélectionner la nouvelle image</label>
+        <input type="file" id="new-image-file" accept="image/*" required style="border: none; padding: 0;">
+      </div>
+      
+      <button type="submit" id="btnSubmitImage" class="form-submit" style="width: 100%; justify-content: center; margin-top: 1rem;">Remplacer l'image sur GitHub</button>
+      
+      <button type="button" id="btnRestoreImage" class="btn-outline" style="width: 100%; justify-content: center;">Restaurer l'image précédente</button>
+    </form>
+  </div>
+</div>
+ 
 <!-- MODALE DES LIVRES (TOTALEMENT INDÉPENDANTE) -->
 <div class="book-modal-overlay" id="bookLinksModal">
   <div class="book-modal-box">
@@ -841,6 +875,131 @@
     if (!saveRes.ok) throw new Error("Impossible de mettre à jour le fichier de données sur GitHub.");
     renderNewsGrid();
   }
+// =========================================================
+  // --- SYSTÈME DE REMPLACEMENT ET SAUVEGARDE DES IMAGES ---
+  // =========================================================
+  const imageEditModal = document.getElementById('imageEditModal');
+  const closeImageEdit = document.getElementById('closeImageEdit');
+  const imageEditForm = document.getElementById('imageEditForm');
+  const btnRestoreImage = document.getElementById('btnRestoreImage');
+
+  // Helpers pour communiquer facilement avec GitHub
+  async function getGitHubFile(path) {
+    const res = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, { headers: { 'Authorization': `token ${gitHubToken}` } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.content.replace(/\s/g, ''); // Renvoie le fichier pur
+  }
+
+  async function putGitHubFile(path, base64Content, commitMessage) {
+    let sha = null;
+    const check = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, { headers: { 'Authorization': `token ${gitHubToken}` } });
+    if (check.ok) sha = (await check.json()).sha;
+
+    const body = { message: commitMessage, content: base64Content };
+    if (sha) body.sha = sha;
+
+    const res = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
+      method: 'PUT',
+      headers: { 'Authorization': `token ${gitHubToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(`Échec de la communication avec GitHub pour ${path}`);
+    return res;
+  }
+
+  // Fermeture modale
+  closeImageEdit.addEventListener('click', () => imageEditModal.classList.remove('active'));
+
+  // 1. Détecter le clic sur les images
+  document.body.addEventListener('click', (e) => {
+    if (!document.body.classList.contains('admin-mode')) return;
+    
+    if (e.target.tagName === 'IMG' && !e.target.classList.contains('store-icon')) {
+      e.preventDefault(); e.stopPropagation();
+      
+      const imgSrc = e.target.getAttribute('src');
+      if (!imgSrc || imgSrc.startsWith('http') || imgSrc.startsWith('data:')) {
+        alert("Cette image provient d'un lien externe et ne peut pas être modifiée ici."); return;
+      }
+      
+      document.getElementById('image-target-path').value = imgSrc;
+      document.getElementById('imageEditPath').innerText = "Fichier cible : " + imgSrc;
+      imageEditModal.classList.add('active');
+    }
+  });
+
+  // 2. Remplacer l'image (crée un Backup au préalable)
+  imageEditForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const targetPath = document.getElementById('image-target-path').value;
+    const file = document.getElementById('new-image-file').files[0];
+    const btn = document.getElementById('btnSubmitImage');
+    
+    btn.innerText = "Sauvegarde & Mise à jour...";
+    btn.disabled = true;
+    btnRestoreImage.disabled = true;
+    
+    try {
+      const fileName = targetPath.split('/').pop();
+      const backupPath = `photos/anciennes_images/${fileName}`;
+      
+      // Étape A : Copier l'image actuelle vers le dossier de secours
+      const currentBase64 = await getGitHubFile(targetPath);
+      if (currentBase64) {
+        await putGitHubFile(backupPath, currentBase64, `Sauvegarde avant remplacement : ${fileName}`);
+      }
+
+      // Étape B : Écraser l'image originale par la nouvelle
+      const newBase64 = await getBase64(file);
+      await putGitHubFile(targetPath, newBase64, `Mise à jour de l'image : ${fileName}`);
+      
+      alert("Opération réussie !\nL'ancienne image a été mise en sécurité.\n\nNote : Vous devez patienter 1 à 2 minutes puis faire Ctrl+F5 pour voir le changement s'afficher.");
+      imageEditModal.classList.remove('active');
+      imageEditForm.reset();
+    } catch(err) {
+      alert("Erreur : " + err.message);
+    } finally {
+      btn.innerText = "Remplacer l'image sur GitHub";
+      btn.disabled = false;
+      btnRestoreImage.disabled = false;
+    }
+  });
+
+  // 3. Restaurer la sauvegarde
+  btnRestoreImage.addEventListener('click', async () => {
+    const targetPath = document.getElementById('image-target-path').value;
+    const fileName = targetPath.split('/').pop();
+    const backupPath = `photos/anciennes_images/${fileName}`;
+    
+    btnRestoreImage.innerText = "Recherche de la sauvegarde...";
+    btnRestoreImage.disabled = true;
+    document.getElementById('btnSubmitImage').disabled = true;
+
+    try {
+      // Chercher s'il existe une sauvegarde pour cette image
+      const backupBase64 = await getGitHubFile(backupPath);
+      if (!backupBase64) {
+        alert("Impossible de restaurer : aucune ancienne version n'a été trouvée pour cette image.");
+        return;
+      }
+
+      // Si trouvée, on écrase l'image actuelle avec le backup
+      btnRestoreImage.innerText = "Restauration en cours...";
+      await putGitHubFile(targetPath, backupBase64, `Restauration de l'ancienne image : ${fileName}`);
+      
+      alert("L'image précédente a été restaurée avec succès !\n\nNote : Patientez 1 à 2 minutes puis appuyez sur Ctrl+F5 pour voir le résultat.");
+      imageEditModal.classList.remove('active');
+      imageEditForm.reset();
+    } catch(err) {
+      alert("Erreur lors de la restauration : " + err.message);
+    } finally {
+      btnRestoreImage.innerText = "Restaurer l'image précédente";
+      btnRestoreImage.disabled = false;
+      document.getElementById('btnSubmitImage').disabled = false;
+    }
+  });
+ 
  // --- CONFIGURATION DE L'ORDRE ET DES LOGOS DES LIBRAIRIES ---
   // Remplacez les chemins "photos/logo_..." par vos fichiers images réels
   const storesConfig = [
