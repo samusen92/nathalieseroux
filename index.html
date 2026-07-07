@@ -817,12 +817,46 @@ adminLoginForm.addEventListener('submit', (e) => {
     newsFormModal.classList.add('active');
   };
 
-  // Convertir le fichier image sélectionné en Base64 pour l'envoi API
+  // Convertir ET optimiser l'image en Base64 (Netteté et taille web)
   function getBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        
+        img.onload = () => {
+          // 1. Définir une largeur max idéale pour le web (1600px est largement suffisant)
+          const MAX_WIDTH = 1600;
+          let width = img.width;
+          let height = img.height;
+
+          // Recalculer les proportions si l'image est très grande
+          if (width > MAX_WIDTH) {
+            height = Math.round((height * MAX_WIDTH) / width);
+            width = MAX_WIDTH;
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+
+          // 2. Forcer l'algorithme du navigateur à lisser l'image en haute qualité
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+
+          // Dessiner l'image aux nouvelles dimensions
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // 3. Exporter en JPEG avec 95% de qualité (excellent compromis netteté/poids)
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+          
+          resolve(dataUrl.split(',')[1]);
+        };
+        img.onerror = error => reject(error);
+      };
       reader.onerror = error => reject(error);
     });
   }
