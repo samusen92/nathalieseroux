@@ -1393,32 +1393,37 @@
     }
   });
 
-window.openSeriesView = function(index) {
-  const item = localPortfolioArray[index];
-  if (!item) return; // garde-fou contre un index invalide
+  // 7. Affichage "Nouvelle Page" (Modale Plein Écran)
+  window.openSeriesView = function(index) {
+    const item = localPortfolioArray[index];
+    document.getElementById('seriesViewTitle').innerText = item.title;
+    document.getElementById('seriesViewText').innerText = item.text;
+    
+    const imagesGrid = document.getElementById('seriesViewImages');
+    imagesGrid.innerHTML = '';
+    
+    if (item.images && item.images.length > 0) {
+      item.images.forEach(imgSrc => {
+        imagesGrid.innerHTML += `<img src="${imgSrc}" alt="${item.title}">`;
+      });
+    } else {
+      // Fallback si pas d'image HD, afficher la couverture
+      imagesGrid.innerHTML = `<img src="${item.cover}" alt="${item.title}">`;
+    }
+    
+    // Bloque le scroll de la page en arrière plan
+    document.body.style.overflow = 'hidden'; 
+    seriesPageView.classList.add('active');
+    
+    // Remonte en haut de la page série
+    seriesPageView.scrollTo(0, 0);
+  };
 
-  document.getElementById('seriesViewTitle').innerText = item.title;
-  document.getElementById('seriesViewText').innerText  = item.text;
+  btnCloseSeriesView.addEventListener('click', () => {
+    seriesPageView.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  });
+</script>
 
-  const imagesGrid = document.getElementById('seriesViewImages');
-  imagesGrid.innerHTML = ''; // vide la grille une seule fois
-
-  // Fallback couverture si pas d'images HD
-  const sources = (item.images && item.images.length > 0) ? item.images : [item.cover];
-
-  // On construit UNE chaîne puis on l'injecte en une fois : un seul parsing, zéro image relancée
-  imagesGrid.innerHTML = sources
-    .map(src => `<img src="${src}" alt="${item.title}">`)
-    .join('');
-
-  document.body.style.overflow = 'hidden';   // bloque le scroll d'arrière-plan
-  seriesPageView.classList.add('active');
-  seriesPageView.scrollTo(0, 0);
-};
-
-btnCloseSeriesView.addEventListener('click', () => {
-  seriesPageView.classList.remove('active');
-  document.body.style.overflow = '';           // restore la valeur CSS d'origine
-});
 </body>
 </html>
