@@ -627,7 +627,33 @@
   </div>
 </div>
 <!-- =================================================== -->
+<!-- MODALE DES LIVRES (TOTALEMENT INDÉPENDANTE) -->
+<div class="book-modal-overlay" id="bookLinksModal">
+  <div class="book-modal-box">
+    <button class="modal-close" id="closeBookModal">&times;</button>
+    <h3 class="modal-title">Commandez ce livre ici</h3>
+    <div class="store-links-list" id="dynamicStoreLinks"></div>
+  </div>
+</div>
+<!-- =================================================== -->
 
+<!-- INSERER LE BLOC COUPÉ ICI -->
+<!-- Modale d'ajout/édition de Série Portfolio -->
+<div class="admin-modal-overlay" id="portfolioFormModal">
+<!-- ... contenu de la modale ... -->
+</div>
+
+<!-- Vue "Nouvelle Page" d'une Série -->
+<div class="series-page-overlay" id="seriesPageView">
+<!-- ... contenu de la vue ... -->
+</div>
+
+<!-- DEBUT DU SCRIPT -->
+<script>
+  // Configuration de votre dépôt GitHub
+  const GH_OWNER = 'samusen92';
+  const GH_REPO = 'nathalieseroux';
+  const JSON_PATH = 'data/news.json';
 <script>
   // Configuration de votre dépôt GitHub
   const GH_OWNER = 'samusen92';
@@ -1354,8 +1380,7 @@
     seriesPageView.classList.remove('active');
     document.body.style.overflow = 'auto';
   });
-</script>
-<!-- Modale d'ajout/édition de Série Portfolio -->
+ <!-- Modale d'ajout/édition de Série Portfolio -->
 <div class="admin-modal-overlay" id="portfolioFormModal">
   <div class="admin-modal" style="max-width: 600px;">
     <button class="modal-close" id="closePortfolioForm">&times;</button>
@@ -1404,5 +1429,7 @@
     </div>
   </div>
 </div> 
+</script>
+
 </body>
 </html>
