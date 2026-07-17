@@ -297,6 +297,33 @@
     outline-offset: -4px;
     filter: brightness(0.8);
   }
+/* --- Styles Portfolio Dynamique & Vue Série --- */
+  body.admin-mode .add-portfolio-container { display: flex; }
+  .add-portfolio-container { display: none; gap: 1rem; margin-bottom: 2rem; justify-content: flex-end; width: 100%; }
+  
+  .portfolio-item .admin-controls { display: none; top: 0.5rem; right: 0.5rem; background: rgba(255,255,255,0.9); padding: 0.5rem; }
+  body.admin-mode .portfolio-item .admin-controls { display: flex; }
+  
+  .series-page-overlay { position: fixed; inset: 0; background: var(--cream); z-index: 300; overflow-y: auto; display: none; opacity: 0; transition: opacity 0.4s ease; padding: 0; }
+  .series-page-overlay.active { display: block; opacity: 1; }
+  
+  .series-header { padding: 1.5rem 4rem; display: flex; justify-content: space-between; align-items: center; background: rgba(247,242,236,0.95); position: sticky; top: 0; z-index: 310; border-bottom: 1px solid rgba(107,79,58,0.1); backdrop-filter: blur(8px); }
+  .btn-close-series { background: none; border: none; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--charcoal); cursor: pointer; transition: color 0.3s; display: flex; align-items: center; gap: 0.5rem; }
+  .btn-close-series:hover { color: var(--terracotta); }
+  
+  .series-content { max-width: 1200px; margin: 4rem auto; padding: 0 4rem; }
+  .series-title { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-weight: 300; color: var(--charcoal); margin-bottom: 1.5rem; }
+  .series-text { font-size: 1rem; line-height: 1.8; color: var(--text-muted); max-width: 70ch; margin-bottom: 4rem; }
+  
+  .series-images-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 2rem; }
+  .series-images-grid img { width: 100%; height: auto; object-fit: cover; display: block; box-shadow: 0 10px 30px rgba(44,36,32,0.05); }
+  
+  @media (max-width: 900px) {
+    .series-header { padding: 1.5rem 2rem; }
+    .series-content { padding: 0 2rem; }
+    .series-images-grid { grid-template-columns: 1fr; }
+  }
+ 
 </style>
 </head>
 <body>
@@ -445,28 +472,14 @@
       <div><p class="section-label">Portfolio</p><h2 class="section-title">Les séries</h2></div>
       <a href="#contact" class="btn-outline" style="flex-shrink:0;">Organiser un atelier →</a>
     </div>
-    <div class="portfolio-grid">
-      <div class="portfolio-item">
-        <img src="photos/serie_principale.jpg" alt="Life On — série documentaire">
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>Life On</h4><p>Série documentaire</p></div></div>
-      </div>
-      <div class="portfolio-item">
-        <img src="photos/serie_montagne.jpg" alt="À la montagne">
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>À la montagne</h4><p>Reportage</p></div></div>
-      </div>
-      
-      <div class="portfolio-item">
-        <img src="photos/com_salons_du_livre.png" alt="Salon du Livre">
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>Salon du Livre</h4><p>Rencontres</p></div></div>
-      </div>
-      <div class="portfolio-item">
-        <img src="photos/atelier_dans_la_ville1.jpg" alt="Atelier en école">
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>Atelier en école</h4><p>Médiation</p></div></div>
-      </div>
-      <div class="portfolio-item">
-        <img src="photos/atelier_dans_la_ville2.jpg" alt="Atelier en école">
-        <div class="portfolio-overlay"><div class="portfolio-caption"><h4>Atelier en école</h4><p>Médiation</p></div></div>
-      </div>
+    
+    <div class="add-portfolio-container">
+      <button class="btn-outline" id="btnRestorePortfolio" style="display:none; border-color: var(--bark); color: var(--bark);">↶ Rétablir la dernière suppression</button>
+      <button class="btn-outline" id="btnOpenAddPortfolio">✚ Ajouter une série</button>
+    </div>
+
+    <div class="portfolio-grid" id="portfolioGrid">
+      <!-- Les séries seront injectées ici par JavaScript -->
     </div>
   </div>
 </section>
@@ -615,6 +628,17 @@
 </div>
 <!-- =================================================== -->
 
+<!-- Modale d'ajout/édition de Série Portfolio -->
+<div class="admin-modal-overlay" id="portfolioFormModal">
+<!-- ... contenu de la modale ... -->
+</div>
+
+<!-- Vue "Nouvelle Page" d'une Série -->
+<div class="series-page-overlay" id="seriesPageView">
+<!-- ... contenu de la vue ... -->
+</div>
+
+<!-- DEBUT DU SCRIPT -->
 <script>
   // Configuration de votre dépôt GitHub
   const GH_OWNER = 'samusen92';
@@ -1094,6 +1118,303 @@
   bookLinksModal.addEventListener('click', (e) => {
     if (e.target === bookLinksModal) bookLinksModal.classList.remove('active');
   });
+ // =========================================================
+  // --- GESTION DU PORTFOLIO ET ARCHIVAGE ---
+  // =========================================================
+  const PORTFOLIO_JSON_PATH = 'data/portfolio.json';
+  const ARCHIVE_JSON_PATH = 'data/archive_portfolio.json';
+  let localPortfolioArray = [];
+
+  // Éléments DOM
+  const portfolioGrid = document.getElementById('portfolioGrid');
+  const btnOpenAddPortfolio = document.getElementById('btnOpenAddPortfolio');
+  const btnRestorePortfolio = document.getElementById('btnRestorePortfolio');
+  const portfolioFormModal = document.getElementById('portfolioFormModal');
+  const closePortfolioForm = document.getElementById('closePortfolioForm');
+  const portfolioSeriesForm = document.getElementById('portfolioSeriesForm');
+  
+  const seriesPageView = document.getElementById('seriesPageView');
+  const btnCloseSeriesView = document.getElementById('btnCloseSeriesView');
+
+  window.addEventListener('DOMContentLoaded', () => {
+    loadPortfolioFromGitHub();
+  });
+
+  // 1. Charger les séries
+  async function loadPortfolioFromGitHub() {
+    try {
+      let response;
+      if (gitHubToken) {
+        response = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${PORTFOLIO_JSON_PATH}`, { headers: { 'Authorization': `token ${gitHubToken}` } });
+        if (response.ok) {
+          const fileData = await response.json();
+          localPortfolioArray = JSON.parse(b64_to_utf8(fileData.content.replace(/\s/g, '')));
+        }
+      } else {
+        response = await fetch(`${PORTFOLIO_JSON_PATH}?t=${Date.now()}`);
+        if (response.ok) localPortfolioArray = await response.json();
+      }
+      renderPortfolioGrid();
+    } catch (e) {
+      console.warn("Fichier portfolio.json introuvable ou vide. Il sera créé lors du premier ajout.");
+      localPortfolioArray = [];
+    }
+  }
+
+  // 2. Afficher la grille
+  function renderPortfolioGrid() {
+    portfolioGrid.innerHTML = '';
+    if (localPortfolioArray.length === 0) {
+      portfolioGrid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--text-muted);">Aucune série dans le portfolio.</p>';
+      return;
+    }
+    localPortfolioArray.forEach((item, index) => {
+      // Configuration d'affichage dynamique (la première image prend plus de place)
+      portfolioGrid.innerHTML += `
+        <div class="portfolio-item" onclick="openSeriesView(${index})">
+          <div class="admin-controls" onclick="event.stopPropagation();">
+            <button class="btn-admin" onclick="openEditPortfolio(${index})">Éditer</button>
+            <button class="btn-admin btn-admin-danger" onclick="deletePortfolioItem(${index})">Supprimer</button>
+          </div>
+          <img src="${item.cover}" alt="${item.title}">
+          <div class="portfolio-overlay">
+            <div class="portfolio-caption">
+              <h4>${item.title}</h4>
+              <p>Voir la série</p>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  // 3. Ouvrir la modale d'ajout/édition
+  btnOpenAddPortfolio.addEventListener('click', () => {
+    portfolioSeriesForm.reset();
+    document.getElementById('portfolio-edit-index').value = "";
+    document.getElementById('portfolioModalTitle').innerText = "Ajouter une série";
+    document.getElementById('portfolio-cover-path').innerText = "";
+    document.getElementById('portfolio-cover-file').required = true;
+    portfolioFormModal.classList.add('active');
+  });
+
+  closePortfolioForm.addEventListener('click', () => portfolioFormModal.classList.remove('active'));
+
+  window.openEditPortfolio = function(index) {
+    const item = localPortfolioArray[index];
+    document.getElementById('portfolio-edit-index').value = index;
+    document.getElementById('portfolio-title').value = item.title;
+    document.getElementById('portfolio-text').value = item.text;
+    document.getElementById('portfolio-cover-path').innerText = "Couverture actuelle : " + item.cover;
+    document.getElementById('portfolio-cover-file').required = false;
+    document.getElementById('portfolioModalTitle').innerText = "Modifier la série";
+    portfolioFormModal.classList.add('active');
+  };
+
+  // 4. Sauvegarder la série (Gère l'upload multiple)
+  portfolioSeriesForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const indexStr = document.getElementById('portfolio-edit-index').value;
+    const title = document.getElementById('portfolio-title').value;
+    const text = document.getElementById('portfolio-text').value;
+    const coverFile = document.getElementById('portfolio-cover-file').files[0];
+    const hdFiles = document.getElementById('portfolio-hd-files').files;
+    
+    const btnSubmit = document.getElementById('btnSubmitPortfolio');
+    btnSubmit.innerText = "Téléversement en cours...";
+    btnSubmit.disabled = true;
+
+    try {
+      let coverPath = indexStr !== "" ? localPortfolioArray[parseInt(indexStr)].cover : "";
+      let imagesList = indexStr !== "" ? (localPortfolioArray[parseInt(indexStr)].images || []) : [];
+
+      // A. Upload de la couverture
+      if (coverFile) {
+        const b64 = await getBase64(coverFile);
+        const fName = `port_cov_${Date.now()}_${slugifyFileName(coverFile.name)}`;
+        await putGitHubFile(`photos/${fName}`, b64, `Upload cover: ${fName}`);
+        coverPath = `photos/${fName}`;
+      }
+
+      // B. Upload des images HD (en parallèle pour plus de vitesse)
+      if (hdFiles.length > 0) {
+        const uploadPromises = Array.from(hdFiles).map(async (file) => {
+          const b64 = await getBase64(file);
+          const fName = `port_hd_${Date.now()}_${slugifyFileName(file.name)}`;
+          await putGitHubFile(`photos/${fName}`, b64, `Upload image HD: ${fName}`);
+          return `photos/${fName}`;
+        });
+        const uploadedPaths = await Promise.all(uploadPromises);
+        imagesList = imagesList.concat(uploadedPaths); // Ajoute aux images existantes
+      }
+
+      // C. Mise à jour JSON
+      const seriesData = { title, text, cover: coverPath, images: imagesList };
+      if (indexStr === "") localPortfolioArray.unshift(seriesData);
+      else localPortfolioArray[parseInt(indexStr)] = seriesData;
+
+      await putGitHubFile(PORTFOLIO_JSON_PATH, utf8_to_b64(JSON.stringify(localPortfolioArray, null, 2)), "Mise à jour du Portfolio");
+      
+      portfolioFormModal.classList.remove('active');
+      alert("Série enregistrée avec succès !");
+      renderPortfolioGrid();
+    } catch (err) {
+      alert("Erreur : " + err.message);
+    } finally {
+      btnSubmit.innerText = "Enregistrer la série sur GitHub";
+      btnSubmit.disabled = false;
+    }
+  });
+
+  // 5. Suppression & Archivage
+  window.deletePortfolioItem = async function(index) {
+    if (!confirm("Voulez-vous vraiment supprimer cette série ? Elle sera archivée.")) return;
+    
+    const deletedItem = localPortfolioArray.splice(index, 1)[0];
+    
+    try {
+      // 5A. Récupérer l'archive actuelle (si elle existe)
+      let archiveArray = [];
+      const archRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${ARCHIVE_JSON_PATH}`, { headers: { 'Authorization': `token ${gitHubToken}` } });
+      if (archRes.ok) {
+        const archData = await archRes.json();
+        archiveArray = JSON.parse(b64_to_utf8(archData.content.replace(/\s/g, '')));
+      }
+      
+      // 5B. Ajouter l'élément supprimé à l'archive
+      archiveArray.push(deletedItem);
+      await putGitHubFile(ARCHIVE_JSON_PATH, utf8_to_b64(JSON.stringify(archiveArray, null, 2)), "Archivage de série");
+      
+      // 5C. Mettre à jour le portfolio principal
+      await putGitHubFile(PORTFOLIO_JSON_PATH, utf8_to_b64(JSON.stringify(localPortfolioArray, null, 2)), "Suppression d'une série");
+      
+      btnRestorePortfolio.style.display = 'inline-flex';
+      renderPortfolioGrid();
+      alert("Série supprimée et archivée.");
+    } catch (err) {
+      alert("Erreur lors de la suppression : " + err.message);
+    }
+  };
+
+  // 6. Rétablir la dernière série supprimée
+  btnRestorePortfolio.addEventListener('click', async () => {
+    btnRestorePortfolio.innerText = "Restauration...";
+    btnRestorePortfolio.disabled = true;
+
+    try {
+      // 6A. Récupérer l'archive
+      const archRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${ARCHIVE_JSON_PATH}`, { headers: { 'Authorization': `token ${gitHubToken}` } });
+      if (!archRes.ok) throw new Error("Fichier d'archive introuvable.");
+      
+      const archData = await archRes.json();
+      let archiveArray = JSON.parse(b64_to_utf8(archData.content.replace(/\s/g, '')));
+      
+      if (archiveArray.length === 0) {
+        alert("L'archive est vide.");
+        return;
+      }
+
+      // 6B. Retirer la dernière entrée de l'archive
+      const restoredItem = archiveArray.pop();
+      
+      // 6C. Sauvegarder la nouvelle archive
+      await putGitHubFile(ARCHIVE_JSON_PATH, utf8_to_b64(JSON.stringify(archiveArray, null, 2)), "Mise à jour archive (Restauration)");
+
+      // 6D. Remettre l'élément dans le portfolio et sauvegarder
+      localPortfolioArray.unshift(restoredItem);
+      await putGitHubFile(PORTFOLIO_JSON_PATH, utf8_to_b64(JSON.stringify(localPortfolioArray, null, 2)), "Restauration d'une série");
+      
+      if (archiveArray.length === 0) btnRestorePortfolio.style.display = 'none';
+      renderPortfolioGrid();
+      alert("La série a été rétablie avec succès !");
+    } catch (err) {
+      alert("Erreur : " + err.message);
+    } finally {
+      btnRestorePortfolio.innerText = "↶ Rétablir la dernière suppression";
+      btnRestorePortfolio.disabled = false;
+    }
+  });
+
+  // 7. Affichage "Nouvelle Page" (Modale Plein Écran)
+  window.openSeriesView = function(index) {
+    const item = localPortfolioArray[index];
+    document.getElementById('seriesViewTitle').innerText = item.title;
+    document.getElementById('seriesViewText').innerText = item.text;
+    
+    const imagesGrid = document.getElementById('seriesViewImages');
+    imagesGrid.innerHTML = '';
+    
+    if (item.images && item.images.length > 0) {
+      item.images.forEach(imgSrc => {
+        imagesGrid.innerHTML += `<img src="${imgSrc}" alt="${item.title}">`;
+      });
+    } else {
+      // Fallback si pas d'image HD, afficher la couverture
+      imagesGrid.innerHTML = `<img src="${item.cover}" alt="${item.title}">`;
+    }
+    
+    // Bloque le scroll de la page en arrière plan
+    document.body.style.overflow = 'hidden'; 
+    seriesPageView.classList.add('active');
+    
+    // Remonte en haut de la page série
+    seriesPageView.scrollTo(0, 0);
+  };
+
+  btnCloseSeriesView.addEventListener('click', () => {
+    seriesPageView.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  });
+ <!-- Modale d'ajout/édition de Série Portfolio -->
+<div class="admin-modal-overlay" id="portfolioFormModal">
+  <div class="admin-modal" style="max-width: 600px;">
+    <button class="modal-close" id="closePortfolioForm">&times;</button>
+    <h3 class="modal-title" id="portfolioModalTitle">Ajouter une série</h3>
+    <form class="contact-form" id="portfolioSeriesForm" style="gap: 1.5rem;">
+      <input type="hidden" id="portfolio-edit-index" value="">
+      
+      <div class="form-group">
+        <label for="portfolio-title">Titre de la série</label>
+        <input type="text" id="portfolio-title" required placeholder="Ex: Life On">
+      </div>
+      
+      <div class="form-group">
+        <label for="portfolio-text">Texte de présentation</label>
+        <textarea id="portfolio-text" required placeholder="Description de la série..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="portfolio-cover-file">Image de couverture</label>
+        <input type="file" id="portfolio-cover-file" accept="image/*" style="border: none; padding: 0;">
+        <span id="portfolio-cover-path" style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 0.5rem;"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="portfolio-hd-files">Images Haute Qualité (Sélection multiple possible)</label>
+        <input type="file" id="portfolio-hd-files" accept="image/*" multiple style="border: none; padding: 0;">
+        <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Note: L'ajout de nouvelles images s'ajoutera à la galerie existante si vous modifiez une série.</p>
+      </div>
+      
+      <button type="submit" id="btnSubmitPortfolio" class="form-submit" style="width: 100%; justify-content: center; margin-top: 1rem;">Enregistrer la série sur GitHub</button>
+    </form>
+  </div>
+</div>
+
+<!-- Vue "Nouvelle Page" d'une Série -->
+<div class="series-page-overlay" id="seriesPageView">
+  <div class="series-header">
+    <button class="btn-close-series" id="btnCloseSeriesView">← Retour au portfolio</button>
+    <div class="nav-logo" style="font-size: 1rem;">Nathalie Seroux</div>
+  </div>
+  <div class="series-content">
+    <h1 class="series-title" id="seriesViewTitle">Titre</h1>
+    <p class="series-text" id="seriesViewText">Texte...</p>
+    <div class="series-images-grid" id="seriesViewImages">
+      <!-- Images HD injectées ici -->
+    </div>
+  </div>
+</div> 
 </script>
+
 </body>
 </html>
