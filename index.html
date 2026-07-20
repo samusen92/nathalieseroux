@@ -370,8 +370,13 @@
         <p class="section-label">À propos</p>
         <h2 class="section-title">Rencontrer,<br><em>Créer</em>, Partager</h2>
         <div class="divider-line"></div>
-        <p class="section-body">Titulaire d'un Master de Photographie & Art Contemporain de Paris 8, Nathalie Seroux porte un regard poétique sur le monde. Après une carrière dans le marketing, elle se consacre entièrement à la photographie en 2008.</p>
-        <p class="section-body" style="margin-top:0.75rem;">Son leitmotiv : accueillir les émotions simples de l'instant. Un appareil toujours à portée de main, elle capte la lumière du quotidien pour en révéler la beauté discrète — reportages, portraits, nature morte.</p>
+        <div class="admin-controls" style="position: relative; top: auto; right: auto; margin-bottom: 1rem; justify-content: flex-start;">
+          <button class="btn-admin" id="btnEditAbout">Éditer le texte</button>
+        </div>
+        <div id="aboutTextContainer">
+          <p class="section-body">Titulaire d'un Master de Photographie & Art Contemporain de Paris 8, Nathalie Seroux porte un regard poétique sur le monde. Après une carrière dans le marketing, elle se consacre entièrement à la photographie en 2008.</p>
+          <p class="section-body" style="margin-top:0.75rem;">Son leitmotiv : accueillir les émotions simples de l'instant. Un appareil toujours à portée de main, elle capte la lumière du quotidien pour en révéler la beauté discrète — reportages, portraits, nature morte.</p>
+        </div>
         <div class="stats-row">
           <div class="stat-item"><span class="stat-number">8</span><span class="stat-label">Livres publiés</span></div>
           <div class="stat-item"><span class="stat-number">15+</span><span class="stat-label">Années d'expérience</span></div>
@@ -635,6 +640,21 @@
   </div>
 </div>
  
+<div class="admin-modal-overlay" id="aboutFormModal">
+  <div class="admin-modal">
+    <button class="modal-close" id="closeAboutForm">&times;</button>
+    <h3 class="modal-title">Modifier À propos</h3>
+    <form class="contact-form" id="aboutTextForm" style="gap: 1.5rem;">
+      <div class="form-group">
+        <label for="about-text-input">Texte de présentation</label>
+        <textarea id="about-text-input" required style="min-height: 200px;"></textarea>
+        <span style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 0.5rem;">Séparez les paragraphes par un double saut de ligne.</span>
+      </div>
+      <button type="submit" id="btnSubmitAbout" class="form-submit" style="width: 100%; justify-content: center; margin-top: 1rem;">Enregistrer sur GitHub</button>
+    </form>
+  </div>
+</div>
+
 <!-- MODALE DES LIVRES (TOTALEMENT INDÉPENDANTE) -->
 <div class="book-modal-overlay" id="bookLinksModal">
   <div class="book-modal-box">
@@ -744,6 +764,88 @@
   window.addEventListener('DOMContentLoaded', () => {
     if (gitHubToken) document.body.classList.add('admin-mode');
     loadNewsFromGitHub();
+    loadAboutFromGitHub();
+  });
+
+  // --- GESTION DE LA RUBRIQUE À PROPOS ---
+  const ABOUT_JSON_PATH = 'data/about.json';
+  const aboutTextContainer = document.getElementById('aboutTextContainer');
+  const btnEditAbout = document.getElementById('btnEditAbout');
+  const aboutFormModal = document.getElementById('aboutFormModal');
+  const closeAboutForm = document.getElementById('closeAboutForm');
+  const aboutTextForm = document.getElementById('aboutTextForm');
+  const aboutTextInput = document.getElementById('about-text-input');
+  
+  let localAboutText = "";
+
+  async function loadAboutFromGitHub() {
+    try {
+      let response;
+      if (gitHubToken) {
+        response = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${ABOUT_JSON_PATH}`, { headers: { 'Authorization': `token ${gitHubToken}` } });
+        if (response.ok) {
+          const fileData = await response.json();
+          const aboutData = JSON.parse(b64_to_utf8(fileData.content.replace(/\s/g, '')));
+          localAboutText = aboutData.text || "";
+        }
+      } else {
+        response = await fetch(`${ABOUT_JSON_PATH}?t=${Date.now()}`);
+        if (response.ok) {
+          const aboutData = await response.json();
+          localAboutText = aboutData.text || "";
+        }
+      }
+      renderAboutText();
+    } catch (e) {
+      console.warn("Impossible de charger data/about.json, on garde le texte par défaut.");
+    }
+  }
+
+  function renderAboutText() {
+    if (!localAboutText) return; // Garde le texte en dur s'il n'y a rien
+    const paragraphs = localAboutText.split('\n\n').filter(p => p.trim() !== '');
+    aboutTextContainer.innerHTML = '';
+    paragraphs.forEach((pText, index) => {
+      const p = document.createElement('p');
+      p.className = 'section-body';
+      if (index > 0) p.style.marginTop = '0.75rem';
+      p.innerText = pText;
+      aboutTextContainer.appendChild(p);
+    });
+  }
+
+  btnEditAbout.addEventListener('click', () => {
+    if (!localAboutText) {
+      const ps = Array.from(aboutTextContainer.querySelectorAll('p.section-body'));
+      localAboutText = ps.map(p => p.innerText).join('\n\n');
+    }
+    aboutTextInput.value = localAboutText;
+    aboutFormModal.classList.add('active');
+  });
+
+  closeAboutForm.addEventListener('click', () => aboutFormModal.classList.remove('active'));
+
+  aboutTextForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btnSubmit = document.getElementById('btnSubmitAbout');
+    btnSubmit.innerText = "Synchronisation GitHub...";
+    btnSubmit.disabled = true;
+
+    try {
+      const newText = aboutTextInput.value;
+      const jsonString = JSON.stringify({ text: newText }, null, 2);
+      await putGitHubFile(ABOUT_JSON_PATH, utf8_to_b64(jsonString), "Mise à jour du texte À propos");
+      
+      localAboutText = newText;
+      renderAboutText();
+      aboutFormModal.classList.remove('active');
+      alert("Le texte a été mis à jour avec succès !");
+    } catch (err) {
+      alert("Erreur lors de l'enregistrement : " + err.message);
+    } finally {
+      btnSubmit.innerText = "Enregistrer sur GitHub";
+      btnSubmit.disabled = false;
+    }
   });
 
   // Récupérer et afficher les articles (Lecture publique ou API temps réel pour l'admin)
