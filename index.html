@@ -1294,15 +1294,17 @@
         coverPath = `photos/${fName}`;
       }
 
-      // B. Upload des images HD (en parallèle pour plus de vitesse)
+      // B. Upload des images HD (en séquentiel pour éviter le blocage de l'API GitHub)
       if (hdFiles.length > 0) {
-        const uploadPromises = Array.from(hdFiles).map(async (file) => {
+        const uploadedPaths = [];
+        for (let i = 0; i < hdFiles.length; i++) {
+          const file = hdFiles[i];
           const b64 = await getBase64(file);
-          const fName = `port_hd_${Date.now()}_${slugifyFileName(file.name)}`;
+          // L'index 'i' garantit un nom unique même si l'upload va très vite
+          const fName = `port_hd_${Date.now()}_${i}_${slugifyFileName(file.name)}`;
           await putGitHubFile(`photos/${fName}`, b64, `Upload image HD: ${fName}`);
-          return `photos/${fName}`;
-        });
-        const uploadedPaths = await Promise.all(uploadPromises);
+          uploadedPaths.push(`photos/${fName}`);
+        }
         imagesList = imagesList.concat(uploadedPaths); // Ajoute aux images existantes
       }
 
