@@ -689,10 +689,15 @@
         <span id="portfolio-cover-path" style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 0.5rem;"></span>
       </div>
 
+      <div class="form-group" id="existing-images-group" style="display: none;">
+        <label>Images actuellement dans la série</label>
+        <div id="existing-images-container" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;"></div>
+        <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Cliquez sur la croix pour retirer une image de la série.</p>
+      </div>
+
       <div class="form-group">
-        <label for="portfolio-hd-files">Images Haute Qualité (Sélection multiple possible)</label>
+        <label for="portfolio-hd-files">Ajouter de nouvelles images (Sélection multiple possible)</label>
         <input type="file" id="portfolio-hd-files" accept="image/*" multiple style="border: none; padding: 0;">
-        <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Note: L'ajout de nouvelles images s'ajoutera à la galerie existante si vous modifiez une série.</p>
       </div>
 
       <button type="submit" id="btnSubmitPortfolio" class="form-submit" style="width: 100%; justify-content: center; margin-top: 1rem;">Enregistrer la série sur GitHub</button>
@@ -1365,6 +1370,62 @@
     });
   }
 
+  let currentEditingImages = [];
+
+  function renderExistingImages() {
+    const group = document.getElementById('existing-images-group');
+    const container = document.getElementById('existing-images-container');
+    if (currentEditingImages.length === 0) {
+      group.style.display = 'none';
+      container.innerHTML = '';
+      return;
+    }
+    group.style.display = 'block';
+    container.innerHTML = '';
+    currentEditingImages.forEach((imgSrc, idx) => {
+      const wrapper = document.createElement('div');
+      wrapper.style.position = 'relative';
+      wrapper.style.width = '60px';
+      wrapper.style.height = '60px';
+      
+      const img = document.createElement('img');
+      img.src = imgSrc;
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
+      img.style.borderRadius = '4px';
+      
+      const btnRemove = document.createElement('button');
+      btnRemove.innerHTML = '&times;';
+      btnRemove.type = 'button';
+      btnRemove.style.position = 'absolute';
+      btnRemove.style.top = '-5px';
+      btnRemove.style.right = '-5px';
+      btnRemove.style.background = 'var(--terracotta)';
+      btnRemove.style.color = 'white';
+      btnRemove.style.border = 'none';
+      btnRemove.style.borderRadius = '50%';
+      btnRemove.style.width = '18px';
+      btnRemove.style.height = '18px';
+      btnRemove.style.cursor = 'pointer';
+      btnRemove.style.fontSize = '12px';
+      btnRemove.style.lineHeight = '1';
+      btnRemove.style.display = 'flex';
+      btnRemove.style.alignItems = 'center';
+      btnRemove.style.justifyContent = 'center';
+      
+      btnRemove.onclick = (e) => {
+        e.preventDefault();
+        currentEditingImages.splice(idx, 1);
+        renderExistingImages();
+      };
+      
+      wrapper.appendChild(img);
+      wrapper.appendChild(btnRemove);
+      container.appendChild(wrapper);
+    });
+  }
+
   // 3. Ouvrir la modale d'ajout/édition
   btnOpenAddPortfolio.addEventListener('click', () => {
     portfolioSeriesForm.reset();
@@ -1372,6 +1433,8 @@
     document.getElementById('portfolioModalTitle').innerText = "Ajouter une série";
     document.getElementById('portfolio-cover-path').innerText = "";
     document.getElementById('portfolio-cover-file').required = true;
+    currentEditingImages = [];
+    renderExistingImages();
     portfolioFormModal.classList.add('active');
   });
 
@@ -1385,6 +1448,10 @@
     document.getElementById('portfolio-cover-path').innerText = "Couverture actuelle : " + item.cover;
     document.getElementById('portfolio-cover-file').required = false;
     document.getElementById('portfolioModalTitle').innerText = "Modifier la série";
+    
+    currentEditingImages = item.images ? [...item.images] : [];
+    renderExistingImages();
+    
     portfolioFormModal.classList.add('active');
   };
 
@@ -1403,7 +1470,7 @@
 
     try {
       let coverPath = indexStr !== "" ? localPortfolioArray[parseInt(indexStr)].cover : "";
-      let imagesList = indexStr !== "" ? (localPortfolioArray[parseInt(indexStr)].images || []) : [];
+      let imagesList = [...currentEditingImages];
 
       // A. Upload de la couverture
       if (coverFile) {
