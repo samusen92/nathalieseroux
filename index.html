@@ -1256,12 +1256,24 @@
   const closeBookModal = document.getElementById('closeBookModal');
   const dynamicStoreLinks = document.getElementById('dynamicStoreLinks');
 
+  const bookTitles = {
+    'ferme': 'À la ferme',
+    'abcdaire': 'ABCdaire',
+    'mer': 'Au bord de la mer',
+    'autour-de-moi': 'Autour de moi',
+    'fruits': 'Fruits et légumes',
+    'montagne': 'À la montagne',
+    'ville': 'Dans la ville',
+    'engins': 'Engins'
+  };
+
   window.openBookModal = function(bookId) {
     dynamicStoreLinks.innerHTML = ''; // On vide les anciens boutons
     const links = booksData[bookId];
+    const bookTitle = bookTitles[bookId] || bookId;
     
     if (window.umami) {
-      umami.track('Consultation Livre', { livre: bookId });
+      umami.track(`Vue Livre : ${bookTitle}`);
     }
 
     if (links) {
@@ -1271,7 +1283,7 @@
         // Condition stricte : si l'URL existe et n'est pas vide, on crée le bouton
         if (url && url.trim() !== '') {
           dynamicStoreLinks.innerHTML += `
-            <a href="${url}" class="btn-store" target="_blank" rel="noopener noreferrer" data-umami-event="Clic Librairie" data-umami-event-livre="${bookId}" data-umami-event-boutique="${store.name}">
+            <a href="${url}" class="btn-store" target="_blank" rel="noopener noreferrer" data-umami-event="Achat ${store.name} (${bookTitle})" data-umami-event-livre="${bookTitle}" data-umami-event-boutique="${store.name}">
               <img src="${store.icon}" alt="Logo ${store.name}" class="store-icon">
               <span>${store.name}</span>
             </a>
