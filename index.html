@@ -6,6 +6,7 @@
 <title>Nathalie Seroux —  Photographe</title>
 <meta name="description" content="Nathalie Seroux, photographe-autrice basée en Île-de-France. Portfolio, livres jeunesse et workshops photo.">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<script defer src="https://cloud.umami.is/script.js" data-website-id="55572d22-8d36-45e5-8f70-f4cd90048925"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -509,11 +510,11 @@
         </div>
         
         <div class="social-links">
-          <a href="https://www.instagram.com/nathalieseroux/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+          <a href="https://www.instagram.com/nathalieseroux/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram" data-umami-event="Clic Instagram">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
             Instagram
           </a>
-          <a href="https://www.facebook.com/nathalieserouxphotographe" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Facebook">
+          <a href="https://www.facebook.com/nathalieserouxphotographe" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Facebook" data-umami-event="Clic Facebook">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
             Facebook
           </a>
@@ -1259,6 +1260,10 @@
     dynamicStoreLinks.innerHTML = ''; // On vide les anciens boutons
     const links = booksData[bookId];
     
+    if (window.umami) {
+      umami.track('Consultation Livre', { livre: bookId });
+    }
+
     if (links) {
       // On parcourt la configuration pour garantir le même ordre d'affichage
       storesConfig.forEach(store => {
@@ -1266,7 +1271,7 @@
         // Condition stricte : si l'URL existe et n'est pas vide, on crée le bouton
         if (url && url.trim() !== '') {
           dynamicStoreLinks.innerHTML += `
-            <a href="${url}" class="btn-store" target="_blank" rel="noopener noreferrer">
+            <a href="${url}" class="btn-store" target="_blank" rel="noopener noreferrer" data-umami-event="Clic Librairie" data-umami-event-livre="${bookId}" data-umami-event-boutique="${store.name}">
               <img src="${store.icon}" alt="Logo ${store.name}" class="store-icon">
               <span>${store.name}</span>
             </a>
